@@ -196,7 +196,11 @@ class handler(BaseHTTPRequestHandler):
                         {"scene": 4, "duration": "31s - 38s (CTA)", "visual": "Mũi tên chỉ xuống link Bio", "voiceover": "Bấm Lưu lại clip và Follow kênh để nhận full bộ prompt này nhé!"}
                     ],
                     "suggested_audio": "Nhạc nền Upbeat Trendy Lo-Fi",
-                    "estimated_length": "38 giây"
+                    "estimated_length": "38 giây",
+                    "video_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                    "file_size": "2.45 MB",
+                    "md5_hash": "e9b20756a1b24890d98762514fcb7a12",
+                    "resolution": "720x1280 (9:16)"
                 }
             })
             return

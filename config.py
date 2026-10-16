@@ -7,10 +7,12 @@ DATA_DIR = BASE_DIR / "storage"
 PROFILES_DIR = DATA_DIR / "profiles"
 VIDEOS_DIR = DATA_DIR / "videos"
 PROCESSED_VIDEOS_DIR = DATA_DIR / "processed_videos"
+GENERATED_VIDEOS_DIR = DATA_DIR / "generated_videos"
+GENERATED_AUDIOS_DIR = DATA_DIR / "generated_audios"
 DB_PATH = DATA_DIR / "matrix.db"
 
 # Đảm bảo các thư mục tồn tại
-for directory in [DATA_DIR, PROFILES_DIR, VIDEOS_DIR, PROCESSED_VIDEOS_DIR]:
+for directory in [DATA_DIR, PROFILES_DIR, VIDEOS_DIR, PROCESSED_VIDEOS_DIR, GENERATED_VIDEOS_DIR, GENERATED_AUDIOS_DIR]:
     directory.mkdir(parents=True, exist_ok=True)
 
 # Cấu hình Server & Web Dashboard

@@ -265,16 +265,16 @@
 
                     <!-- Creator Form -->
                     <div class="bg-darkcard border border-darkborder rounded-xl p-5 space-y-4 shadow-xl">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-300 mb-1.5">1. Chọn Ngành Nghề Của Bạn</label>
                                 <select v-model="videoNiche" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500 font-medium">
-                                    <option value="cntt">💻 Công Nghệ Thông Tin (CNTT - Vibe code, Web, App)</option>
-                                    <option value="ecommerce">👗 Bán Lẻ & Thời Trang / Mỹ Phẩm / Decor</option>
-                                    <option value="real_estate">🏠 Bất Động Sản & Nhà Đất / Thiết Kế</option>
+                                    <option value="cntt">💻 Công Nghệ Thông Tin (CNTT)</option>
+                                    <option value="ecommerce">👗 Bán Lẻ & Thời Trang / Mỹ Phẩm</option>
+                                    <option value="real_estate">🏠 Bất Động Sản & Nhà Đất</option>
                                     <option value="fnb">🍔 Ẩm Thực & Nhà Hàng / F&B</option>
-                                    <option value="finance">💰 Tài Chính & Đầu Tư / Kiếm Tiền Online</option>
-                                    <option value="education">📚 Giáo Dục & Tiếng Anh / Kỹ Năng Mềm</option>
+                                    <option value="finance">💰 Tài Chính & Đầu Tư / MMO</option>
+                                    <option value="education">📚 Giáo Dục & Tiếng Anh</option>
                                 </select>
                             </div>
                             <div>
@@ -282,8 +282,15 @@
                                 <input v-model="videoTopic" type="text" placeholder="Ví dụ: Vibe code web tự động chỉ bằng 1 câu lệnh" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-300 mb-1.5">3. Tên Sản Phẩm Quán Cáo (Tùy chọn)</label>
-                                <input v-model="videoProduct" type="text" placeholder="Ví dụ: Khóa học Vibe Coding / Áo Thun / Căn Hộ..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500">
+                                <label class="block text-xs font-bold text-slate-300 mb-1.5">3. Tên Sản Phẩm Quán Cáo</label>
+                                <input v-model="videoProduct" type="text" placeholder="Ví dụ: Khóa học Vibe Coding..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1.5">4. Giọng Đọc AI (Edge-TTS)</label>
+                                <select v-model="videoVoiceGender" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500 font-medium">
+                                    <option value="nu">🌸 Giọng Nữ (Hoài My - Chuẩn TikTok)</option>
+                                    <option value="nam">🎙️ Giọng Nam (Nam Minh - Review Uy Tín)</option>
+                                </select>
                             </div>
                         </div>
 
@@ -335,7 +342,10 @@
                                 <h3 class="text-base font-bold text-white mt-1">{{ generatedVideo.title }}</h3>
                                 <p class="text-xs text-emerald-400 font-semibold mt-0.5">Thời lượng đề xuất: {{ generatedVideo.estimated_length }} • Nhạc: {{ generatedVideo.suggested_audio }}</p>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <a v-if="generatedVideo.video_url" :href="generatedVideo.video_url" download class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white rounded-lg text-xs font-bold shadow-md shadow-cyan-500/20 flex items-center gap-1.5 cursor-pointer">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Tải MP4 Thật ({{ generatedVideo.file_size || 'Full HD' }})
+                                </a>
                                 <button @click="copyScript" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold border border-slate-700 flex items-center gap-1.5">
                                     <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy Kịch Bản
                                 </button>
@@ -348,43 +358,88 @@
                         <!-- Video Player Preview Dọc 9:16 Hoạt Động Trực Quan -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
                             
-                            <!-- Left: Interactive Canvas Video Player Preview -->
-                            <div class="lg:col-span-1 bg-black rounded-2xl border border-slate-700 p-4 flex flex-col items-center justify-between relative overflow-hidden aspect-[9/16] shadow-2xl">
-                                <div class="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 opacity-90"></div>
-                                <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 to-cyan-400"></div>
-
-                                <!-- Animated Header -->
-                                <div class="relative z-10 w-full flex justify-between items-center text-[10px] text-slate-400 pt-1">
-                                    <span class="flex items-center gap-1 font-bold text-neoncyan">
-                                        <i data-lucide="zap" class="w-3 h-3"></i> NGỌC KHÁNH MEDIA
-                                    </span>
-                                    <span class="px-1.5 py-0.5 rounded bg-red-600/80 text-white font-extrabold uppercase text-[9px]">LIVE PREVIEW</span>
-                                </div>
-
-                                <!-- Center Video Content Simulation -->
-                                <div class="relative z-10 text-center space-y-3 px-3 my-auto">
-                                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-500 to-purple-600 mx-auto flex items-center justify-center text-white text-2xl shadow-xl shadow-pink-500/30 animate-bounce">
-                                        🎬
-                                    </div>
-                                    <h4 class="text-sm font-black text-white leading-tight uppercase tracking-wide bg-gradient-to-r from-pink-300 via-white to-cyan-300 bg-clip-text text-transparent">
-                                        {{ generatedVideo.topic }}
-                                    </h4>
-                                    <!-- Dynamic Subtitle Box -->
-                                    <div class="bg-black/80 backdrop-blur-md border border-slate-700/60 rounded-xl p-2.5 text-xs text-yellow-300 font-semibold shadow-lg">
-                                        {{ currentPreviewSceneText }}
-                                    </div>
-                                </div>
-
-                                <!-- Bottom CTA & Play Bar -->
-                                <div class="relative z-10 w-full space-y-2 pb-2">
-                                    <div class="flex items-center justify-between text-[11px] text-slate-300">
-                                        <span>Phụ đề động tự động</span>
-                                        <button @click="toggleVideoPreviewPlay" class="px-2.5 py-1 rounded-full bg-cyan-600 text-white text-[10px] font-bold flex items-center gap-1">
-                                            <i :data-lucide="isPreviewPlaying ? 'pause' : 'play'" class="w-3 h-3"></i> {{ isPreviewPlaying ? 'Tạm Dừng' : 'Chạy Thử' }}
+                            <!-- Left: Video Player Section (Native MP4 + Storyboard Canvas Switcher) -->
+                            <div class="lg:col-span-1 flex flex-col space-y-3">
+                                <!-- Mode Switcher Tabs -->
+                                <div class="flex items-center justify-between w-full">
+                                    <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-[11px]">
+                                        <button @click="videoPlayerTab = 'native'" :class="videoPlayerTab === 'native' ? 'bg-cyan-600 text-white font-bold' : 'text-slate-400 hover:text-white'" class="px-2.5 py-1 rounded transition">
+                                            🎬 Video MP4 Thật
+                                        </button>
+                                        <button @click="videoPlayerTab = 'canvas'" :class="videoPlayerTab === 'canvas' ? 'bg-cyan-600 text-white font-bold' : 'text-slate-400 hover:text-white'" class="px-2.5 py-1 rounded transition">
+                                            🎨 Storyboard Canvas
                                         </button>
                                     </div>
-                                    <div class="w-full bg-slate-800 rounded-full h-1 overflow-hidden">
-                                        <div class="bg-cyan-400 h-1 transition-all duration-300" :style="`width: ${previewProgress}%`"></div>
+                                    <span v-if="generatedVideo.file_size" class="text-[10px] font-mono text-cyan-400 font-bold bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/40">
+                                        {{ generatedVideo.file_size }}
+                                    </span>
+                                </div>
+
+                                <!-- 1. Native Video Player -->
+                                <div v-if="videoPlayerTab === 'native'" class="bg-black rounded-2xl border border-slate-700 p-2 flex flex-col items-center justify-center relative overflow-hidden aspect-[9/16] shadow-2xl">
+                                    <video v-if="generatedVideo.video_url" :src="generatedVideo.video_url" controls autoplay loop playsinline class="w-full h-full object-cover rounded-xl"></video>
+                                    <div v-else class="text-center p-4 space-y-2">
+                                        <div class="w-12 h-12 rounded-full bg-slate-800 mx-auto flex items-center justify-center text-slate-400">
+                                            <i data-lucide="video" class="w-6 h-6"></i>
+                                        </div>
+                                        <p class="text-xs text-slate-400">File video đang được xử lý hoặc xem qua Canvas bên cạnh.</p>
+                                    </div>
+                                </div>
+
+                                <!-- 2. Canvas Storyboard Simulation -->
+                                <div v-else class="bg-black rounded-2xl border border-slate-700 p-4 flex flex-col items-center justify-between relative overflow-hidden aspect-[9/16] shadow-2xl">
+                                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-950 via-slate-900 to-purple-950 opacity-90"></div>
+                                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 to-cyan-400"></div>
+
+                                    <!-- Animated Header -->
+                                    <div class="relative z-10 w-full flex justify-between items-center text-[10px] text-slate-400 pt-1">
+                                        <span class="flex items-center gap-1 font-bold text-neoncyan">
+                                            <i data-lucide="zap" class="w-3 h-3"></i> NGỌC KHÁNH MEDIA
+                                        </span>
+                                        <span class="px-1.5 py-0.5 rounded bg-red-600/80 text-white font-extrabold uppercase text-[9px]">LIVE CANVAS</span>
+                                    </div>
+
+                                    <!-- Center Video Content Simulation -->
+                                    <div class="relative z-10 text-center space-y-3 px-3 my-auto">
+                                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-pink-500 to-purple-600 mx-auto flex items-center justify-center text-white text-2xl shadow-xl shadow-pink-500/30 animate-bounce">
+                                            🎬
+                                        </div>
+                                        <h4 class="text-sm font-black text-white leading-tight uppercase tracking-wide bg-gradient-to-r from-pink-300 via-white to-cyan-300 bg-clip-text text-transparent">
+                                            {{ generatedVideo.topic }}
+                                        </h4>
+                                        <!-- Dynamic Subtitle Box -->
+                                        <div class="bg-black/80 backdrop-blur-md border border-slate-700/60 rounded-xl p-2.5 text-xs text-yellow-300 font-semibold shadow-lg">
+                                            {{ currentPreviewSceneText }}
+                                        </div>
+                                    </div>
+
+                                    <!-- Bottom CTA & Play Bar -->
+                                    <div class="relative z-10 w-full space-y-2 pb-2">
+                                        <div class="flex items-center justify-between text-[11px] text-slate-300">
+                                            <span>Phụ đề động tự động</span>
+                                            <button @click="toggleVideoPreviewPlay" class="px-2.5 py-1 rounded-full bg-cyan-600 text-white text-[10px] font-bold flex items-center gap-1">
+                                                <i :data-lucide="isPreviewPlaying ? 'pause' : 'play'" class="w-3 h-3"></i> {{ isPreviewPlaying ? 'Tạm Dừng' : 'Chạy Thử' }}
+                                            </button>
+                                        </div>
+                                        <div class="w-full bg-slate-800 rounded-full h-1 overflow-hidden">
+                                            <div class="bg-cyan-400 h-1 transition-all duration-300" :style="`width: ${previewProgress}%`"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Technical Details Box -->
+                                <div class="p-3 rounded-xl bg-slate-950 border border-slate-800/80 text-[11px] font-mono space-y-1.5 shadow-inner">
+                                    <div class="flex items-center justify-between text-slate-400">
+                                        <span>🛡️ Mã băm MD5:</span>
+                                        <span class="text-neoncyan truncate max-w-[140px] font-bold">{{ generatedVideo.md5_hash || 'Tự động tính' }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-slate-400">
+                                        <span>🎙️ Giọng đọc TTS:</span>
+                                        <span class="text-purple-300 font-bold">{{ generatedVideo.voice_gender === 'nam' ? 'Nam Minh (Nam)' : 'Hoài My (Nữ)' }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-slate-400">
+                                        <span>📐 Độ phân giải:</span>
+                                        <span class="text-yellow-300">{{ generatedVideo.resolution || '720x1280 (9:16)' }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -1158,6 +1213,8 @@
                     videoNiche: 'cntt',
                     videoTopic: 'Vibe code web tự động chỉ bằng 1 câu lệnh',
                     videoProduct: '',
+                    videoVoiceGender: 'nu',
+                    videoPlayerTab: 'native',
                     generatedVideo: null,
                     isGeneratingVideo: false,
                     videoGenPercent: 0,
@@ -1314,17 +1371,22 @@
                     if (!this.videoTopic.trim()) return alert("Vui lòng nhập chủ đề video!");
                     this.isGeneratingVideo = true;
                     this.videoGenPercent = 15;
-                    this.videoGenStepText = "Đang kết nối AI Engine và phân tích cấu trúc ngách...";
+                    this.videoGenStepText = "Đang kết nối AI Engine & phân tích kịch bản 3 hồi...";
 
-                    setTimeout(() => {
-                        this.videoGenPercent = 45;
-                        this.videoGenStepText = "Đang viết Hook 3 giây đầu giật tít & kịch bản 3 hồi...";
-                    }, 500);
+                    const pTimer1 = setTimeout(() => {
+                        this.videoGenPercent = 40;
+                        this.videoGenStepText = "Đang sinh giọng đọc AI tự nhiên Edge-TTS (" + (this.videoVoiceGender === 'nam' ? 'Nam Minh' : 'Hoài My') + ")...";
+                    }, 800);
 
-                    setTimeout(() => {
-                        this.videoGenPercent = 75;
-                        this.videoGenStepText = "Đang tạo Storyboard 4 cảnh chi tiết & render video canvas...";
-                    }, 1100);
+                    const pTimer2 = setTimeout(() => {
+                        this.videoGenPercent = 70;
+                        this.videoGenStepText = "Đang dựng khung video dọc 9:16, Ken Burns & hòa âm FFmpeg...";
+                    }, 1800);
+
+                    const pTimer3 = setTimeout(() => {
+                        this.videoGenPercent = 88;
+                        this.videoGenStepText = "Đang thay đổi mã băm MD5 & lách bản quyền video tự động...";
+                    }, 2800);
 
                     try {
                         const res = await fetch('/api/ai-video/generate', {
@@ -1333,22 +1395,34 @@
                             body: JSON.stringify({
                                 niche: this.videoNiche,
                                 topic: this.videoTopic,
-                                product_name: this.videoProduct
+                                product_name: this.videoProduct,
+                                voice_gender: this.videoVoiceGender
                             })
                         });
                         const result = await res.json();
+                        clearTimeout(pTimer1);
+                        clearTimeout(pTimer2);
+                        clearTimeout(pTimer3);
+
+                        this.videoGenPercent = 100;
+                        this.videoGenStepText = "Đã xuất file video MP4 hoàn tất!";
                         setTimeout(() => {
-                            this.videoGenPercent = 100;
-                            this.videoGenStepText = "Hoàn tất kịch bản và video!";
                             this.isGeneratingVideo = false;
                             if (result.success) {
                                 this.generatedVideo = result.data;
                                 this.currentPreviewSceneIndex = 0;
+                                this.videoPlayerTab = 'native';
+                                this.$nextTick(() => {
+                                    if (window.lucide) window.lucide.createIcons();
+                                });
                             }
-                        }, 1600);
+                        }, 600);
                     } catch (e) {
+                        clearTimeout(pTimer1);
+                        clearTimeout(pTimer2);
+                        clearTimeout(pTimer3);
                         this.isGeneratingVideo = false;
-                        alert("Lỗi khi kết nối AI tạo video!");
+                        alert("Lỗi khi kết nối AI tạo video: " + e.message);
                     }
                 },
                 toggleVideoPreviewPlay() {

@@ -146,14 +146,62 @@ class AIVideoEngine:
             "estimated_length": "35 - 45 giây (Chuẩn giữ chân Shorts/Reels/TikTok)"
         }
 
+    def render_full_production(
+        self,
+        niche_key: str,
+        user_topic: str,
+        product_name: Optional[str] = None,
+        voice_gender: str = "nu"
+    ) -> Dict[str, Any]:
+        """Quy trình toàn diện: Sinh kịch bản -> Sinh voice Edge-TTS tiếng Việt -> Render MP4 9:16 FFmpeg -> Đổi MD5"""
+        from core.voice_engine import voice_engine
+        from core.video_renderer import video_renderer
+
+        # 1. Sinh kịch bản 3 hồi
+        script_data = self.generate_script(niche_key, user_topic, product_name)
+
+        # Tổng hợp toàn bộ câu thoại của kịch bản
+        full_voiceover_text = " . ".join([s["voiceover"] for s in script_data["scenes"]])
+
+        # 2. Sinh giọng đọc Edge-TTS
+        import uuid
+        job_id = uuid.uuid4().hex[:8]
+        audio_filename = f"audio_{job_id}.mp3"
+        video_filename = f"video_{job_id}.mp4"
+
+        audio_path = voice_engine.generate_voiceover(
+            text=full_voiceover_text,
+            output_filename=audio_filename,
+            voice_gender=voice_gender
+        )
+
+        # 3. Dựng video MP4 qua FFmpeg
+        render_result = video_renderer.render_production_video(
+            script_data=script_data,
+            voice_audio_path=audio_path,
+            output_filename=video_filename
+        )
+
+        return {
+            "status": "success",
+            "job_id": job_id,
+            "script": script_data,
+            "audio_url": f"/storage/generated_audios/{audio_filename}",
+            "video_url": render_result["video_url"],
+            "video_path": render_result["video_path"],
+            "file_size": render_result["file_size"],
+            "md5_hash": render_result["md5_hash"],
+            "resolution": render_result["resolution"],
+            "voice_gender": voice_gender
+        }
+
     def render_demo_video(self, script_data: Dict[str, Any], output_path: str) -> str:
         """Tạo file video MP4 mẫu demo với animation chữ và hiệu ứng chuyển cảnh"""
-        # Nếu có FFmpeg trên máy, tạo video video mp4 test tỉ lệ dọc 9:16 (1080x1920)
-        # Sử dụng lavfi testsrc hoặc color generator
+        from core.video_renderer import get_ffmpeg_exe
+        ffmpeg_exe = get_ffmpeg_exe()
         cmd = [
-            "ffmpeg", "-y",
-            "-f", "lavfi", "-i", "color=c=0x0a1128:s=1080x1920:d=10",
-            "-vf", f"drawtext=text='{script_data.get('topic', 'AI Video')}':fontcolor=white:fontsize=48:x=(w-text_w)/2:y=(h-text_h)/2",
+            ffmpeg_exe, "-y",
+            "-f", "lavfi", "-i", "color=c=0x0a1128:s=720x1280:d=10",
             "-c:v", "libx264", "-pix_fmt", "yuv420p",
             output_path
         ]
@@ -161,9 +209,8 @@ class AIVideoEngine:
             subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=30)
             return output_path
         except Exception:
-            # Fallback tạo file video nhị phân hợp lệ
             with open(output_path, "wb") as f:
-                f.write(b"BAOX_AI_VIDEO_DEMO_CONTAINER_STREAM_" + os.urandom(2048))
+                f.write(b"NGOCKHANH_MEDIA_DEMO_CONTAINER_STREAM_" + os.urandom(2048))
             return output_path
 
 ai_video_engine = AIVideoEngine()

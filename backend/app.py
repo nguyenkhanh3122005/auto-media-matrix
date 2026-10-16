@@ -67,6 +67,37 @@ class MatrixRequestHandler(SimpleHTTPRequestHandler):
             self.wfile.write(content)
             return
 
+        elif path.startswith("/storage/"):
+            subpath = path[len("/storage/"):]
+            from config import DATA_DIR
+            target_file = (DATA_DIR / subpath).resolve()
+            if str(target_file).startswith(str(DATA_DIR.resolve())) and target_file.is_file():
+                ext = target_file.suffix.lower()
+                content_type = "application/octet-stream"
+                if ext == ".mp4":
+                    content_type = "video/mp4"
+                elif ext == ".mp3":
+                    content_type = "audio/mpeg"
+                elif ext in [".jpg", ".jpeg"]:
+                    content_type = "image/jpeg"
+                elif ext == ".png":
+                    content_type = "image/png"
+                
+                with open(target_file, "rb") as f:
+                    data = f.read()
+                self.send_response(200)
+                self.send_header('Content-Type', content_type)
+                self.send_header('Content-Length', str(len(data)))
+                self.send_header('Accept-Ranges', 'bytes')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(data)
+                return
+            else:
+                self.send_response(404)
+                self.end_headers()
+                return
+
         elif path == "/api/stats":
             self.send_json(db.get_stats())
             return
@@ -285,18 +316,30 @@ class MatrixRequestHandler(SimpleHTTPRequestHandler):
             self.send_json({"success": True, "message": "Đã làm sạch nhật ký"})
             return
 
-        # 14. Tự Động Tạo Video Đa Nền Tảng Theo Ngành Nghề
-        elif path == "/api/ai-video/generate":
+        # 14. Tự Động Tạo Video Đa Nền Tảng Theo Ngành Nghề (Edge-TTS + FFmpeg 9:16 + MD5 Spoofer)
+        elif path == "/api/ai-video/generate" or path == "/api/ai-video/render-production":
             niche = payload.get("niche", "cntt")
             topic = payload.get("topic", "")
             product = payload.get("product_name", "")
-            script_data = ai_video_engine.generate_script(niche, topic, product)
+            voice_gender = payload.get("voice_gender", "nu")
             
-            # Lưu và tạo file video demo
-            out_filename = f"ai_video_{int(time.time())}.mp4"
-            out_path = str(VIDEOS_DIR / out_filename)
-            ai_video_engine.render_demo_video(script_data, out_path)
+            db.add_log("AI Pipeline", "info", f"[1/4] Khởi tạo kịch bản 3 hồi cho ngành: {niche.upper()}")
+            task_runner.broadcast_log(f"🎬 [AI Pipeline] Bắt đầu sinh kịch bản ngành: {niche.upper()} - Chủ đề: {topic or 'Tự động'}")
             
+            # Chạy toàn diện: Sinh kịch bản + Edge-TTS + Render FFmpeg MP4 + Đổi MD5
+            prod_result = ai_video_engine.render_full_production(
+                niche_key=niche,
+                user_topic=topic,
+                product_name=product,
+                voice_gender=voice_gender
+            )
+            script_data = prod_result["script"]
+            out_path = prod_result["video_path"]
+
+            task_runner.broadcast_log(f"🎙️ [Edge-TTS] Đã sinh giọng đọc tiếng Việt ({voice_gender.upper()}) cho kịch bản 4 phân cảnh")
+            task_runner.broadcast_log(f"🎞️ [FFmpeg] Đã ghép video 9:16, audio, Ken Burns & nhạc nền 15%")
+            task_runner.broadcast_log(f"🛡️ [MD5 Spoofer] Đổi mã băm thành công: {prod_result['md5_hash']} ({prod_result['file_size']})")
+
             # Thêm luôn vào kho video của hệ thống
             v_id = db.add_video(
                 title=script_data["title"],
@@ -307,7 +350,13 @@ class MatrixRequestHandler(SimpleHTTPRequestHandler):
             )
             script_data["video_id"] = v_id
             script_data["video_path"] = out_path
-            db.add_log("Tạo video AI tự động", "success", f"Đã sinh kịch bản & video cho ngành: {script_data['niche_name']}")
+            script_data["video_url"] = prod_result["video_url"]
+            script_data["audio_url"] = prod_result["audio_url"]
+            script_data["file_size"] = prod_result["file_size"]
+            script_data["md5_hash"] = prod_result["md5_hash"]
+            script_data["resolution"] = prod_result["resolution"]
+            
+            db.add_log("Tạo video AI thành công", "success", f"Đã xuất file video MP4 ({prod_result['file_size']}) cho ngành: {script_data['niche_name']}")
             self.send_json({"success": True, "data": script_data})
             return
 
