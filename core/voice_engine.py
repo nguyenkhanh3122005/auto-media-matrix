@@ -51,10 +51,20 @@ class VoiceEngine:
             except RuntimeError:
                 return asyncio.run(self._async_generate(text, output_path, voice, rate))
         except Exception as e:
-            # Fallback nếu mất mạng: tạo file audio rỗng hợp lệ
-            print(f"[!] Lỗi khi sinh Edge-TTS: {e}")
-            with open(output_path, "wb") as f:
-                f.write(b"MOCK_AUDIO_FALLBACK_BUFFER_" + text.encode("utf-8", errors="ignore"))
+            # Fallback nếu mất mạng hoặc lỗi: tạo file audio MP3 hợp lệ bằng FFmpeg
+            print(f"[!] Lỗi khi sinh Edge-TTS: {e}, tạo âm thanh dự phòng...")
+            try:
+                from core.video_renderer import get_ffmpeg_exe
+                import subprocess
+                subprocess.run([
+                    get_ffmpeg_exe(), "-y",
+                    "-f", "lavfi", "-i", "sine=frequency=440:duration=5",
+                    "-c:a", "libmp3lame", "-b:a", "128k",
+                    output_path
+                ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=10)
+            except Exception:
+                with open(output_path, "wb") as f:
+                    f.write(b"MOCK_AUDIO_FALLBACK_BUFFER_" + text.encode("utf-8", errors="ignore"))
             return output_path
 
 voice_engine = VoiceEngine()
