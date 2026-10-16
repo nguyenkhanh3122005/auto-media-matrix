@@ -5,6 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NGỌC KHÁNH MEDIA - Automation Tools PRO MAX 2026</title>
     <link rel="icon" href="data:,">
+    <script>
+        // Lọc sạch các lỗi do tiện ích mở rộng của trình duyệt (Cốc Cốc 200.js, Zalo extension) tự inject
+        window.addEventListener('unhandledrejection', function(e) {
+            if (e && e.reason && ((e.reason.stack && e.reason.stack.includes('200.js')) || (e.reason.message && e.reason.message.includes('M_ID')))) {
+                e.preventDefault();
+            }
+        });
+        window.addEventListener('error', function(e) {
+            if (e && ((e.filename && e.filename.includes('200.js')) || (e.message && e.message.includes('M_ID')))) {
+                e.preventDefault();
+            }
+        });
+    </script>
     <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1129,7 +1142,7 @@
         </div>
 
         <!-- MODAL AUTH: ĐĂNG NHẬP / ĐĂNG KÝ (USER & ADMIN RIÊNG) -->
-        <div v-if="showAuthModal" @click.self="showAuthModal = false" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div v-if="activeModal === 'auth'" @click.self="closeModals" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
             <div class="bg-darkcard border border-darkborder rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl">
                 <!-- Modal Tabs -->
                 <div class="flex border-b border-slate-800 pb-3 justify-between items-center">
@@ -1141,7 +1154,7 @@
                             Đăng Ký Tài Khoản
                         </button>
                     </div>
-                    <button @click="showAuthModal = false" class="text-slate-500 hover:text-white">
+                    <button @click="closeModals" class="text-slate-500 hover:text-white">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
@@ -1207,13 +1220,13 @@
         </div>
 
         <!-- MODAL THÊM KÊNH MỚI -->
-        <div v-if="showAddModal" @click.self="showAddModal = false" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div v-if="activeModal === 'add'" @click.self="closeModals" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div class="bg-darkcard border border-darkborder rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl relative">
                 <div class="flex justify-between items-center border-b border-darkborder pb-3">
                     <h3 class="text-base font-bold text-white flex items-center gap-2">
                         <i data-lucide="plus-circle" class="w-5 h-5 text-neoncyan"></i> Thêm Tài Khoản Vào Dàn Kênh
                     </h3>
-                    <button @click="showAddModal = false" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors">
+                    <button @click="closeModals" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors">
                         <i data-lucide="x" class="w-5 h-5"></i>
                     </button>
                 </div>
@@ -1236,7 +1249,7 @@
                     </div>
                 </div>
                 <div class="flex justify-end gap-2 pt-3 border-t border-darkborder">
-                    <button @click="showAddModal = false" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold">Hủy</button>
+                    <button @click="closeModals" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold">Hủy</button>
                     <button @click="createAccount" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold">Lưu Kênh</button>
                 </div>
             </div>
@@ -1254,6 +1267,7 @@
                     activeNav: 'ai_video',
                     filterPlatform: 'all',
                     durationMinutes: 10,
+                    activeModal: null, // 'auth' | 'add' | null
                     showAddModal: false,
                     showAuthModal: false,
                     authMode: 'login',
@@ -1346,14 +1360,17 @@
             },
             methods: {
                 openAddModal() {
+                    this.activeModal = 'add';
                     this.showAuthModal = false;
                     this.showAddModal = true;
                 },
                 openAuthModal() {
+                    this.activeModal = 'auth';
                     this.showAddModal = false;
                     this.showAuthModal = true;
                 },
                 closeModals() {
+                    this.activeModal = null;
                     this.showAddModal = false;
                     this.showAuthModal = false;
                 },
