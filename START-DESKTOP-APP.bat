@@ -1,8 +1,8 @@
 @echo off
 chcp 65001 >nul
-title AutoVibe Matrix - Desktop App
+title NGỌC KHÁNH MEDIA - Desktop App
 echo =======================================================
-echo    ⚡ KHỞI ĐỘNG AUTOVIBE MATRIX - GIAO DIỆN DESKTOP
+echo    ⚡ KHỞI ĐỘNG NGỌC KHÁNH MEDIA - GIAO DIỆN DESKTOP
 echo =======================================================
 echo.
 python desktop_gui\gui.py

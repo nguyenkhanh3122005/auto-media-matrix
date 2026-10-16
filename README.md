@@ -1,4 +1,4 @@
-# ⚡ AutoVibe Media Matrix 2026
+# ⚡ NGỌC KHÁNH MEDIA - Auto Media Matrix 2026
 
 > **Hệ thống tự động hóa nuôi nick & đăng video đa nền tảng (TikTok, Facebook Reels, YouTube Shorts)**  
 > Hỗ trợ 3 cơ chế chạy: **Trình duyệt độc lập (Playwright Profile)** + **Antidetect Browser (AdsPower/Hidemyacc API)** + **Giả lập Android (LDPlayer/ADB)**.  

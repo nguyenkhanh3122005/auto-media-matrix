@@ -17,7 +17,7 @@ from config import SERVER_HOST, SERVER_PORT
 class AutoVibeDesktopApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("AutoVibe Matrix - Desktop Control Center")
+        self.root.title("NGỌC KHÁNH MEDIA - Desktop Control Center")
         self.root.geometry("850x620")
         self.root.configure(bg="#0c1017")
 
@@ -47,7 +47,7 @@ class AutoVibeDesktopApp:
         header_frame = tk.Frame(self.root, bg="#121824", height=60, padx=15, pady=10)
         header_frame.pack(fill="x")
         
-        lbl_title = ttk.Label(header_frame, text="⚡ AUTOVIBE MATRIX CONTROL", style="Header.TLabel", background="#121824")
+        lbl_title = ttk.Label(header_frame, text="⚡ NGỌC KHÁNH MEDIA CONTROL", style="Header.TLabel", background="#121824")
         lbl_title.pack(side="left")
 
         btn_web = tk.Button(header_frame, text="🌐 Mở Web Dashboard", bg="#0284c7", fg="white", font=("Segoe UI", 9, "bold"),

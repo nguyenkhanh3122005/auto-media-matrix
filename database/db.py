@@ -105,6 +105,28 @@ class Database:
             )
             """)
 
+            # Bảng Người Dùng & Phân Quyền (Admin / User)
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL,
+                role TEXT NOT NULL DEFAULT 'user',  -- 'admin' | 'user'
+                full_name TEXT,
+                created_at TEXT NOT NULL
+            )
+            """)
+
+            # Seed tài khoản Admin & User mặc định nếu chưa có
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute("SELECT COUNT(*) FROM users")
+            if cursor.fetchone()[0] == 0:
+                cursor.execute("""
+                    INSERT INTO users (username, password, role, full_name, created_at)
+                    VALUES ('admin', 'admin123', 'admin', 'Quản Trị Viên Ngọc Khánh', ?),
+                           ('ngockhanh', '123456', 'user', 'Ngọc Khánh Media User', ?)
+                """, (now, now))
+
             # Bảng cài đặt chung (Key-Value)
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS settings (
@@ -342,5 +364,37 @@ class Database:
 
         self.add_log("Nhập hàng loạt tài khoản", "success", f"Đã nhập thành công {imported_count} kênh mới vào dàn")
         return imported_count
+
+    # --- Authentication & User Management ---
+    def register_user(self, username: str, password: str, role: str = "user", full_name: str = "") -> Optional[int]:
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            try:
+                cursor.execute("""
+                    INSERT INTO users (username, password, role, full_name, created_at)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (username.strip().lower(), password.strip(), role.lower(), full_name.strip() or username, now))
+                conn.commit()
+                return cursor.lastrowid
+            except sqlite3.IntegrityError:
+                return None
+
+    def login_user(self, username: str, password: str) -> Optional[Dict[str, Any]]:
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT id, username, role, full_name, created_at 
+                FROM users 
+                WHERE username = ? AND password = ?
+            """, (username.strip().lower(), password.strip()))
+            row = cursor.fetchone()
+            return dict(row) if row else None
+
+    def get_users(self) -> List[Dict[str, Any]]:
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, username, role, full_name, created_at FROM users ORDER BY id ASC")
+            return [dict(row) for row in cursor.fetchall()]
 
 db = Database()

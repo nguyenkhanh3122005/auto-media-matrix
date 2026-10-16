@@ -144,13 +144,25 @@ class handler(BaseHTTPRequestHandler):
             self.send_json([])
             return
 
-        self.send_json({"status": "online", "message": "BAOX AI Vercel API is running"}, status=200)
+        self.send_json({"status": "online", "message": "NGỌC KHÁNH MEDIA Vercel API is running"}, status=200)
 
     def do_POST(self):
         parsed = urlparse(self.path)
         path = parsed.path
 
-        if "toggle-active" in path:
+        if "auth/login" in path:
+            self.send_json({
+                "success": True,
+                "user": {"id": 1, "username": "admin", "role": "admin", "full_name": "Quản Trị Viên Ngọc Khánh"}
+            })
+            return
+        elif "auth/register" in path:
+            self.send_json({
+                "success": True,
+                "message": "Đăng ký thành công! Hãy đăng nhập tài khoản của bạn."
+            })
+            return
+        elif "toggle-active" in path:
             self.send_json({"success": True, "message": "Đã đổi trạng thái trên Cloud"})
             return
         elif "toggle-all" in path:

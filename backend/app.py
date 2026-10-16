@@ -196,8 +196,37 @@ class MatrixRequestHandler(SimpleHTTPRequestHandler):
 
         # 7. Dừng toàn bộ
         elif path == "/api/accounts/stop-all":
-            db.add_log("Dừng toàn bộ", "warning", "Đã gửi tín hiệu dừng toàn bộ dàn kênh")
+            task_runner.stop_all()
             self.send_json({"success": True, "message": "Đã dừng toàn bộ dàn kênh!"})
+            return
+
+        # Auth: Đăng Nhập
+        elif path == "/api/auth/login":
+            username = payload.get("username", "")
+            password = payload.get("password", "")
+            user = db.login_user(username, password)
+            if user:
+                db.add_log("Đăng nhập hệ thống", "success", f"Người dùng: {user['username']} | Vai trò: {user['role'].upper()}")
+                self.send_json({"success": True, "user": user})
+            else:
+                self.send_json({"success": False, "message": "Tên đăng nhập hoặc mật khẩu không đúng!"}, status=401)
+            return
+
+        # Auth: Đăng Ký
+        elif path == "/api/auth/register":
+            username = payload.get("username", "")
+            password = payload.get("password", "")
+            role = payload.get("role", "user")
+            full_name = payload.get("full_name", "")
+            if not username or not password:
+                self.send_json({"success": False, "message": "Vui lòng nhập đầy đủ thông tin!"}, status=400)
+                return
+            uid = db.register_user(username, password, role, full_name)
+            if uid:
+                db.add_log("Đăng ký tài khoản", "success", f"Tạo mới tài khoản {username} ({role.upper()})")
+                self.send_json({"success": True, "message": "Đăng ký thành công! Bạn có thể đăng nhập ngay."})
+            else:
+                self.send_json({"success": False, "message": "Tên đăng nhập này đã được sử dụng!"}, status=400)
             return
 
         # 8. Thêm tài khoản
@@ -304,10 +333,10 @@ class MatrixRequestHandler(SimpleHTTPRequestHandler):
 
         # 17. Nuôi Kênh Mục Tiêu Theo Ngách Của Mình
         elif path == "/api/channel/target-nurture":
-            channel_id = payload.get("channel_id", "")
-            keywords = payload.get("keywords", "review, mẹo hay, hướng dẫn")
-            db.add_log("Kích hoạt nuôi kênh mục tiêu", "success", f"Tập trung tương tác theo từ khóa ngách: {keywords}")
-            self.send_json({"success": True, "message": f"Đã bật chế độ nuôi kênh chuyên sâu cho {channel_id}!"})
+            channel_id = payload.get("channel_id", "@my_channel")
+            keywords = payload.get("keywords", "review, mẹo hay, hướng dẫn, kinh nghiệm")
+            task_runner.start_target_nurture_thread(channel_id, keywords)
+            self.send_json({"success": True, "message": f"Đã kích hoạt chu kỳ nuôi hút tệp cho kênh {channel_id}!"})
             return
 
         self.send_json({"error": "Endpoint not found"}, status=404)
@@ -337,8 +366,10 @@ def run_server():
     server_address = (SERVER_HOST, SERVER_PORT)
     httpd = ThreadingHTTPServer(server_address, MatrixRequestHandler)
     print("====================================================================")
-    print(f"  ⚡ BAOX AI AUTOMATION SERVER ĐANG CHẠY TẠI:")
+    print(f"  ⚡ NGỌC KHÁNH MEDIA - AUTOMATION SERVER ĐANG CHẠY TẠI:")
     print(f"  👉 http://{SERVER_HOST}:{SERVER_PORT}")
+    print("  👉 Nhấn Ctrl + C để dừng Server.")
+    print("====================================================================")
     print("  👉 Nhấn Ctrl + C để dừng Server.")
     print("====================================================================")
     try:

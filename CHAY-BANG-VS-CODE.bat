@@ -4,7 +4,7 @@ title KHỞI ĐỘNG DỰ ÁN TRÊN VISUAL STUDIO CODE
 color 0A
 
 echo ====================================================================
-echo    ⚡ ĐANG MỞ DỰ ÁN BAOX AI AUTOMATION TRÊN VISUAL STUDIO CODE...
+echo    ⚡ ĐANG MỞ DỰ ÁN NGỌC KHÁNH MEDIA TRÊN VISUAL STUDIO CODE...
 echo ====================================================================
 echo.
 echo 📁 Thư mục dự án: %~dp0
