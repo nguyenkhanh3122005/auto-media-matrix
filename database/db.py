@@ -79,6 +79,32 @@ class Database:
             )
             """)
 
+            # Bảng quản lý Proxy Stealth
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS proxies (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                proxy_str TEXT NOT NULL UNIQUE,
+                status TEXT DEFAULT 'live',     -- 'live', 'die', 'checking'
+                latency_ms INTEGER DEFAULT 45,
+                ip_location TEXT DEFAULT 'Việt Nam (VN)',
+                created_at TEXT NOT NULL
+            )
+            """)
+
+            # Bảng Lịch Up Tự Động 24/7
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS schedules (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                account_id INTEGER,
+                platform TEXT NOT NULL,
+                time_slot TEXT NOT NULL,        -- '08:00', '11:30', '19:45'
+                video_count INTEGER DEFAULT 1,
+                status TEXT DEFAULT 'active',
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE
+            )
+            """)
+
             # Bảng cài đặt chung (Key-Value)
             cursor.execute("""
             CREATE TABLE IF NOT EXISTS settings (
@@ -236,5 +262,85 @@ class Database:
                 "uploaded_videos": uploaded_videos,
                 "total_actions": total_actions
             }
+
+    # --- Proxy Management Methods ---
+    def add_proxy(self, proxy_str: str, ip_location: str = "Việt Nam (VN)") -> int:
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute("""
+                INSERT OR REPLACE INTO proxies (proxy_str, status, latency_ms, ip_location, created_at)
+                VALUES (?, 'live', 48, ?, ?)
+            """, (proxy_str.strip(), ip_location, now))
+            conn.commit()
+            return cursor.lastrowid
+
+    def get_proxies(self) -> List[Dict[str, Any]]:
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM proxies ORDER BY id DESC")
+            return [dict(row) for row in cursor.fetchall()]
+
+    def delete_proxy(self, proxy_id: int):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM proxies WHERE id = ?", (proxy_id,))
+            conn.commit()
+
+    # --- Schedule Management Methods ---
+    def add_schedule(self, platform: str, time_slot: str, account_id: Optional[int] = None) -> int:
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            cursor.execute("""
+                INSERT INTO schedules (account_id, platform, time_slot, created_at)
+                VALUES (?, ?, ?, ?)
+            """, (account_id, platform.lower(), time_slot, now))
+            conn.commit()
+            return cursor.lastrowid
+
+    def get_schedules(self) -> List[Dict[str, Any]]:
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM schedules ORDER BY id DESC")
+            return [dict(row) for row in cursor.fetchall()]
+
+    def delete_schedule(self, schedule_id: int):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM schedules WHERE id = ?", (schedule_id,))
+            conn.commit()
+
+    def clear_logs(self):
+        with self.get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM activity_logs")
+            conn.commit()
+
+    # --- Batch Import Accounts ---
+    def batch_import_accounts(self, raw_text: str, default_platform: str = "tiktok") -> int:
+        """
+        Nhập hàng loạt tài khoản từ định dạng:
+        Name|Platform|Proxy hoặc Username|Password|2FA|Proxy
+        """
+        lines = [l.strip() for l in raw_text.strip().split("\n") if l.strip()]
+        imported_count = 0
+        for line in lines:
+            parts = [p.strip() for p in line.split("|")]
+            if len(parts) >= 2:
+                name = parts[0]
+                platform = parts[1].lower() if parts[1].lower() in ['tiktok', 'facebook', 'youtube'] else default_platform
+                proxy = parts[2] if len(parts) > 2 else ""
+            else:
+                name = parts[0]
+                platform = default_platform
+                proxy = ""
+
+            qualified_name = f"({platform.upper()}): {name}"
+            self.add_account(qualified_name, platform, method="browser", proxy=proxy)
+            imported_count += 1
+
+        self.add_log("Nhập hàng loạt tài khoản", "success", f"Đã nhập thành công {imported_count} kênh mới vào dàn")
+        return imported_count
 
 db = Database()

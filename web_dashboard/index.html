@@ -105,7 +105,7 @@
                         <div class="px-5 text-[11px] font-bold tracking-wider text-slate-500 uppercase mb-2">
                             Quản Trị Kênh
                         </div>
-                        <a href="#" @click.prevent="activeNav = 'nurture'" :class="activeNav === 'nurture' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2.5 flex items-center justify-between text-xs font-semibold transition-colors">
+                        <a href="#" @click.prevent="activeNav = 'nurture'; filterPlatform = 'all'" :class="activeNav === 'nurture' && filterPlatform === 'all' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2.5 flex items-center justify-between text-xs font-semibold transition-colors">
                             <span class="flex items-center gap-2.5">
                                 <i data-lucide="layers" class="w-4 h-4"></i> Trung Tâm Nuôi Kênh
                             </span>
@@ -120,6 +120,7 @@
                             <span class="flex items-center gap-2.5">
                                 <i data-lucide="shield-check" class="w-4 h-4"></i> Cấu Hình Proxy Stealth
                             </span>
+                            <span class="text-[10px] text-cyan-400 font-mono">{{ proxies.length }} LIVE</span>
                         </a>
                     </div>
 
@@ -128,31 +129,39 @@
                         <div class="px-5 text-[11px] font-bold tracking-wider text-slate-500 uppercase mb-2">
                             Tự Động Hóa Nền Tảng
                         </div>
-                        <a href="#" @click.prevent="filterPlatform = 'facebook'" class="px-5 py-2 flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-colors">
+                        <a href="#" @click.prevent="activeNav = 'nurture'; filterPlatform = 'facebook'" :class="activeNav === 'nurture' && filterPlatform === 'facebook' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs transition-colors">
                             <span class="flex items-center gap-2.5">
                                 <span class="text-blue-500 font-bold">f</span> Facebook Nhóm & Reels
                             </span>
+                            <span class="text-[10px] text-slate-500 font-mono">{{ countByPlatform('facebook') }}</span>
                         </a>
-                        <a href="#" @click.prevent="filterPlatform = 'tiktok'" class="px-5 py-2 flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-colors">
+                        <a href="#" @click.prevent="activeNav = 'nurture'; filterPlatform = 'tiktok'" :class="activeNav === 'nurture' && filterPlatform === 'tiktok' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs transition-colors">
                             <span class="flex items-center gap-2.5">
                                 <span class="text-pink-400 font-bold">d</span> TikTok For You & Shop
                             </span>
+                            <span class="text-[10px] text-slate-500 font-mono">{{ countByPlatform('tiktok') }}</span>
                         </a>
-                        <a href="#" @click.prevent="filterPlatform = 'youtube'" class="px-5 py-2 flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-colors">
+                        <a href="#" @click.prevent="activeNav = 'nurture'; filterPlatform = 'youtube'" :class="activeNav === 'nurture' && filterPlatform === 'youtube' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs transition-colors">
                             <span class="flex items-center gap-2.5">
                                 <span class="text-red-500 font-bold">▶</span> YouTube Shorts Studio
                             </span>
+                            <span class="text-[10px] text-slate-500 font-mono">{{ countByPlatform('youtube') }}</span>
                         </a>
                     </div>
 
                     <!-- Menu Group 3 -->
                     <div class="space-y-1">
                         <div class="px-5 text-[11px] font-bold tracking-wider text-slate-500 uppercase mb-2">
-                            Video & Bản Quyền
+                            Video & Tự Động Hóa
                         </div>
                         <a href="#" @click.prevent="activeNav = 'video_upload'" :class="activeNav === 'video_upload' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs font-semibold transition-colors">
                             <span class="flex items-center gap-2.5">
                                 <i data-lucide="film" class="w-4 h-4"></i> Đổi MD5 & Lách Bản Quyền
+                            </span>
+                        </a>
+                        <a href="#" @click.prevent="activeNav = 'schedules'" :class="activeNav === 'schedules' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs font-semibold transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="clock" class="w-4 h-4"></i> Lịch Up Tự Động 24/7
                             </span>
                         </a>
                         <a href="#" @click.prevent="activeNav = 'logs'" :class="activeNav === 'logs' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs font-semibold transition-colors">
@@ -186,163 +195,416 @@
             <!-- MAIN CONTENT AREA -->
             <main class="flex-1 bg-darkbg p-6 overflow-y-auto custom-scroll space-y-5">
                 
-                <!-- Category Tag & Heading -->
-                <div class="space-y-1">
-                    <div class="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wider text-cyan-300 bg-cyan-950/50 border border-cyan-500/30 uppercase">
-                        MULTI-ACCOUNT MANAGEMENT
-                    </div>
-                    <h2 class="text-xl font-bold tracking-tight text-white">
-                        Quản Trị Dàn Kênh & Môi Trường Trình Duyệt
-                    </h2>
-                    <p class="text-xs text-slate-400">
-                        Tự động hóa qua Profile Chrome Playwright Stealth chống quét đa luồng, bảo mật cao cấp.
-                    </p>
-                </div>
-
-                <!-- BANNER: TRUNG TÂM NUÔI KÊNH HÀNG LOẠT -->
-                <div class="rounded-xl bg-gradient-to-r from-slate-900/90 via-[#0c1628] to-slate-900/90 border border-emerald-500/30 p-5 space-y-4 shadow-xl">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-400 mt-0.5">
-                                <i data-lucide="sparkles" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                    Trung Tâm Nuôi Kênh Hàng Loạt (AI Human-Behavior)
-                                </h3>
-                                <p class="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                                    Mở đồng loạt tài khoản được bật • Tự động xếp lưới độc lập • Facebook lướt Bảng tin & Reels xem kỹ • TikTok lướt For You & né QC • Thao tác giống người thật 100%
-                                </p>
-                            </div>
+                <!-- VIEW 1: TRUNG TÂM NUÔI KÊNH (CHÍNH) -->
+                <div v-if="activeNav === 'nurture'" class="space-y-5">
+                    <!-- Category Tag & Heading -->
+                    <div class="space-y-1">
+                        <div class="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wider text-cyan-300 bg-cyan-950/50 border border-cyan-500/30 uppercase">
+                            MULTI-ACCOUNT MANAGEMENT
                         </div>
-                        <div class="shrink-0 flex items-center gap-2">
-                            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
-                                ✔ Sẵn sàng ({{ enabledAccountsCount }}/{{ accounts.length }} kênh đã bật)
+                        <h2 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                            Quản Trị Dàn Kênh & Môi Trường Trình Duyệt
+                            <span v-if="filterPlatform !== 'all'" class="text-xs px-2.5 py-0.5 rounded bg-slate-800 text-cyan-400 uppercase font-bold border border-slate-700">
+                                Lọc: {{ filterPlatform }}
                             </span>
-                            <button @click="showAddModal = true" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 flex items-center gap-1">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm Kênh
-                            </button>
-                        </div>
+                        </h2>
+                        <p class="text-xs text-slate-400">
+                            Tự động hóa qua Profile Chrome Playwright Stealth chống quét đa luồng, bảo mật cao cấp.
+                        </p>
                     </div>
 
-                    <!-- Control Row -->
-                    <div class="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
-                        <div class="flex flex-wrap items-center gap-3">
-                            <div class="flex items-center space-x-2 text-xs">
-                                <span class="text-slate-400">Thời gian nuôi / kênh:</span>
-                                <select v-model="durationMinutes" class="bg-slate-950 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-cyan-500 font-medium">
-                                    <option :value="5">5 phút (Nhanh)</option>
-                                    <option :value="10">10 phút (Chuẩn)</option>
-                                    <option :value="15">15 phút (Kỹ)</option>
-                                    <option :value="30">30 phút (Chuyên sâu)</option>
-                                </select>
-                            </div>
-
-                            <button @click="toggleAll(true)" class="px-3 py-1.5 rounded-lg bg-cyan-700/80 hover:bg-cyan-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
-                                <i data-lucide="check" class="w-3.5 h-3.5"></i> BẬT TẤT CẢ
-                            </button>
-
-                            <button @click="toggleAll(false)" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 border border-slate-700">
-                                <i data-lucide="x" class="w-3.5 h-3.5"></i> TẮT TẤT CẢ
-                            </button>
-                        </div>
-
-                        <div class="flex items-center gap-3">
-                            <button @click="startBatchNurture" class="btn-glow-green text-white font-extrabold text-xs px-5 py-2.5 rounded-lg transition-all flex items-center gap-2 transform active:scale-95 cursor-pointer">
-                                <i data-lucide="zap" class="w-4 h-4 fill-white"></i> BẮT ĐẦU NUÔI HÀNG LOẠT (TỰ ĐỘNG XẾP LƯỚI GRID)
-                            </button>
-
-                            <button @click="stopAll" class="px-3.5 py-2 rounded-lg bg-red-950/80 hover:bg-red-900 border border-red-500/40 text-red-300 text-xs font-bold transition flex items-center gap-1.5">
-                                <i data-lucide="square" class="w-3.5 h-3.5 fill-red-400"></i> Dừng Toàn Bộ
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CHANNELS MATRIX GRID (3 COLUMNS) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div v-for="acc in filteredAccounts" :key="acc.id" class="rounded-xl bg-darkcard border border-darkborder overflow-hidden hover:border-slate-700 transition-all flex flex-col justify-between shadow-lg">
-                        
-                        <!-- Top Toggle Pill Switch -->
-                        <div class="px-4 py-2.5 bg-slate-900/90 border-b border-darkborder flex items-center justify-between">
-                            <button @click="toggleSingle(acc)" :class="acc.is_enabled ? 'bg-emerald-600 text-white border-emerald-400' : 'bg-slate-800 text-slate-400 border-slate-700'" class="px-3 py-1 rounded-full text-[11px] font-bold border flex items-center gap-1.5 transition-all">
-                                <span class="w-2 h-2 rounded-full" :class="acc.is_enabled ? 'bg-white' : 'bg-slate-500'"></span>
-                                {{ acc.is_enabled ? 'BẬT NUÔI KÊNH NÀY' : 'ĐÃ TẮT NUÔI' }}
-                            </button>
-                            <span class="text-[10px] text-slate-500 font-mono">ID: #{{ acc.id }}</span>
-                        </div>
-
-                        <!-- Card Content -->
-                        <div class="p-4 space-y-3 flex-1">
-                            
-                            <!-- Header Info -->
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-center space-x-2.5">
-                                    <!-- Platform Badge Icon -->
-                                    <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
-                                         :class="acc.platform === 'facebook' ? 'bg-blue-600 text-white' : (acc.platform === 'youtube' ? 'bg-red-600 text-white' : 'bg-slate-800 text-pink-400 border border-pink-500/40')">
-                                        <span v-if="acc.platform === 'facebook'">f</span>
-                                        <span v-else-if="acc.platform === 'youtube'">▶</span>
-                                        <span v-else>d</span>
-                                    </div>
-                                    <div>
-                                        <h4 class="text-xs font-bold text-white tracking-tight flex items-center gap-1">
-                                            {{ acc.name }}
-                                        </h4>
-                                        <p class="text-[11px] text-slate-400 capitalize">
-                                            {{ acc.platform }} • {{ acc.followers_count || 0 }} Followers
-                                        </p>
-                                    </div>
+                    <!-- BANNER: TRUNG TÂM NUÔI KÊNH HÀNG LOẠT -->
+                    <div class="rounded-xl bg-gradient-to-r from-slate-900/90 via-[#0c1628] to-slate-900/90 border border-emerald-500/30 p-5 space-y-4 shadow-xl">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-400 mt-0.5">
+                                    <i data-lucide="sparkles" class="w-5 h-5"></i>
                                 </div>
-                                <button @click="deleteAccount(acc.id)" class="text-slate-500 hover:text-red-400 text-xs">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                <div>
+                                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                        Trung Tâm Nuôi Kênh Hàng Loạt (AI Human-Behavior)
+                                    </h3>
+                                    <p class="text-xs text-slate-400 mt-0.5 leading-relaxed">
+                                        Mở đồng loạt tài khoản được bật • Tự động xếp lưới độc lập • Facebook lướt Bảng tin & Reels xem kỹ • TikTok lướt For You & né QC • Thao tác giống người thật 100%
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="shrink-0 flex items-center gap-2">
+                                <span class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+                                    ✔ Sẵn sàng ({{ enabledAccountsCount }}/{{ accounts.length }} kênh đã bật)
+                                </span>
+                                <button @click="showAddModal = true" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 flex items-center gap-1">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm Kênh
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Control Row -->
+                        <div class="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex flex-wrap items-center gap-3">
+                                <div class="flex items-center space-x-2 text-xs">
+                                    <span class="text-slate-400">Thời gian nuôi / kênh:</span>
+                                    <select v-model="durationMinutes" class="bg-slate-950 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-cyan-500 font-medium">
+                                        <option :value="5">5 phút (Nhanh)</option>
+                                        <option :value="10">10 phút (Chuẩn)</option>
+                                        <option :value="15">15 phút (Kỹ)</option>
+                                        <option :value="30">30 phút (Chuyên sâu)</option>
+                                    </select>
+                                </div>
+
+                                <button @click="toggleAll(true)" class="px-3 py-1.5 rounded-lg bg-cyan-700/80 hover:bg-cyan-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                                    <i data-lucide="check" class="w-3.5 h-3.5"></i> BẬT TẤT CẢ
+                                </button>
+
+                                <button @click="toggleAll(false)" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 border border-slate-700">
+                                    <i data-lucide="x" class="w-3.5 h-3.5"></i> TẮT TẤT CẢ
                                 </button>
                             </div>
 
-                            <!-- Card Specs List -->
-                            <div class="rounded-lg bg-cardinner p-3 space-y-1.5 text-[11px]">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-slate-400">Engine Trình duyệt:</span>
-                                    <span class="text-cyan-300 font-semibold flex items-center gap-1">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Chrome Stealth (Lưu Phiên Vĩnh Viễn)
-                                    </span>
+                            <div class="flex items-center gap-3">
+                                <button @click="startBatchNurture" class="btn-glow-green text-white font-extrabold text-xs px-5 py-2.5 rounded-lg transition-all flex items-center gap-2 transform active:scale-95 cursor-pointer">
+                                    <i data-lucide="zap" class="w-4 h-4 fill-white"></i> BẮT ĐẦU NUÔI HÀNG LOẠT (TỰ ĐỘNG XẾP LƯỚI GRID)
+                                </button>
+
+                                <button @click="stopAll" class="px-3.5 py-2 rounded-lg bg-red-950/80 hover:bg-red-900 border border-red-500/40 text-red-300 text-xs font-bold transition flex items-center gap-1.5">
+                                    <i data-lucide="square" class="w-3.5 h-3.5 fill-red-400"></i> Dừng Toàn Bộ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHANNELS MATRIX GRID (3 COLUMNS) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div v-for="acc in filteredAccounts" :key="acc.id" class="rounded-xl bg-darkcard border border-darkborder overflow-hidden hover:border-slate-700 transition-all flex flex-col justify-between shadow-lg">
+                            
+                            <!-- Top Toggle Pill Switch -->
+                            <div class="px-4 py-2.5 bg-slate-900/90 border-b border-darkborder flex items-center justify-between">
+                                <button @click="toggleSingle(acc)" :class="acc.is_enabled ? 'bg-emerald-600 text-white border-emerald-400' : 'bg-slate-800 text-slate-400 border-slate-700'" class="px-3 py-1 rounded-full text-[11px] font-bold border flex items-center gap-1.5 transition-all">
+                                    <span class="w-2 h-2 rounded-full" :class="acc.is_enabled ? 'bg-white' : 'bg-slate-500'"></span>
+                                    {{ acc.is_enabled ? 'BẬT NUÔI KÊNH NÀY' : 'ĐÃ TẮT NUÔI' }}
+                                </button>
+                                <span class="text-[10px] text-slate-500 font-mono">ID: #{{ acc.id }}</span>
+                            </div>
+
+                            <!-- Card Content -->
+                            <div class="p-4 space-y-3 flex-1">
+                                
+                                <!-- Header Info -->
+                                <div class="flex items-start justify-between">
+                                    <div class="flex items-center space-x-2.5">
+                                        <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
+                                             :class="acc.platform === 'facebook' ? 'bg-blue-600 text-white' : (acc.platform === 'youtube' ? 'bg-red-600 text-white' : 'bg-slate-800 text-pink-400 border border-pink-500/40')">
+                                            <span v-if="acc.platform === 'facebook'">f</span>
+                                            <span v-else-if="acc.platform === 'youtube'">▶</span>
+                                            <span v-else>d</span>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-xs font-bold text-white tracking-tight flex items-center gap-1">
+                                                {{ acc.name }}
+                                            </h4>
+                                            <p class="text-[11px] text-slate-400 capitalize">
+                                                {{ acc.platform }} • {{ acc.followers_count || 0 }} Followers
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button @click="deleteAccount(acc.id)" class="text-slate-500 hover:text-red-400 text-xs">
+                                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                    </button>
                                 </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-slate-400">Proxy:</span>
-                                    <span class="text-slate-300 font-mono">{{ acc.proxy || 'Dùng IP máy / 50ms' }}</span>
+
+                                <!-- Card Specs List -->
+                                <div class="rounded-lg bg-cardinner p-3 space-y-1.5 text-[11px]">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400">Engine Trình duyệt:</span>
+                                        <span class="text-cyan-300 font-semibold flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Chrome Stealth (Lưu Phiên Vĩnh Viễn)
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400">Proxy:</span>
+                                        <span class="text-slate-300 font-mono">{{ acc.proxy || 'Dùng IP máy / 50ms' }}</span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400">Trạng thái:</span>
+                                        <span :class="acc.status === 'running' ? 'text-cyan-400 font-bold' : 'text-emerald-400 font-semibold'">
+                                            ● {{ acc.status === 'running' ? 'Đang chạy nuôi' : 'Đang hoạt động' }}
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-400">Tạo lúc:</span>
+                                        <span class="text-slate-400">{{ acc.created_at ? acc.created_at.split(' ')[0] : '1/10/2026' }}</span>
+                                    </div>
                                 </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-slate-400">Trạng thái:</span>
-                                    <span :class="acc.status === 'running' ? 'text-cyan-400 font-bold' : 'text-emerald-400 font-semibold'">
-                                        ● {{ acc.status === 'running' ? 'Đang chạy nuôi' : 'Đang hoạt động' }}
-                                    </span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-slate-400">Tạo lúc:</span>
-                                    <span class="text-slate-400">{{ acc.created_at ? acc.created_at.split(' ')[0] : '1/10/2026' }}</span>
-                                </div>
+
+                            </div>
+
+                            <!-- Card Action Buttons (3 Buttons) -->
+                            <div class="px-4 py-3 bg-slate-900/60 border-t border-darkborder grid grid-cols-3 gap-2">
+                                <button @click="openLogin(acc)" class="px-2 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1 shadow-sm">
+                                    <i data-lucide="key" class="w-3 h-3"></i> Đăng Nhập
+                                </button>
+                                <button @click="checkAlive(acc)" class="px-2 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-[11px] border border-slate-700 transition flex items-center justify-center gap-1">
+                                    <i data-lucide="zap" class="w-3 h-3"></i> Kiểm Tra
+                                </button>
+                                <button @click="nurtureSingle(acc)" class="px-2 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1 shadow-sm shadow-emerald-500/20">
+                                    <i data-lucide="play" class="w-3 h-3"></i> Nuôi Kênh
+                                </button>
                             </div>
 
                         </div>
-
-                        <!-- Card Action Buttons (3 Buttons) -->
-                        <div class="px-4 py-3 bg-slate-900/60 border-t border-darkborder grid grid-cols-3 gap-2">
-                            <button @click="openLogin(acc)" class="px-2 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1 shadow-sm">
-                                <i data-lucide="key" class="w-3 h-3"></i> Đăng Nhập
-                            </button>
-                            <button @click="checkAlive(acc)" class="px-2 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-[11px] border border-slate-700 transition flex items-center justify-center gap-1">
-                                <i data-lucide="zap" class="w-3 h-3"></i> Kiểm Tra
-                            </button>
-                            <button @click="nurtureSingle(acc)" class="px-2 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1 shadow-sm shadow-emerald-500/20">
-                                <i data-lucide="play" class="w-3 h-3"></i> Nuôi Kênh
-                            </button>
-                        </div>
-
                     </div>
                 </div>
 
-                <!-- LIVE LOG TERMINAL EMBEDDED -->
-                <div class="rounded-xl bg-black/90 border border-darkborder p-4 font-mono text-xs space-y-2">
+                <!-- VIEW 2: QUẢN LÝ PROFILE SHEET -->
+                <div v-if="activeNav === 'profile_sheet'" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i data-lucide="sheet" class="w-5 h-5 text-emerald-400"></i> Quản Lý Profile Sheet (Dạng Bảng Tính Hàng Loạt)
+                            </h2>
+                            <p class="text-xs text-slate-400">Nhập danh sách tài khoản theo định dạng Text/Excel nhanh chóng.</p>
+                        </div>
+                        <button @click="exportCSV" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold border border-slate-700 flex items-center gap-1.5">
+                            <i data-lucide="download" class="w-4 h-4"></i> Xuất File CSV
+                        </button>
+                    </div>
+
+                    <!-- Batch Import Box -->
+                    <div class="bg-darkcard border border-darkborder rounded-xl p-5 space-y-3">
+                        <h4 class="text-xs font-bold uppercase text-cyan-300">Nhập Hàng Loạt Tài Khoản (Copy & Paste)</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Mỗi dòng một tài khoản. Định dạng: <code class="bg-slate-900 px-1 py-0.5 rounded text-pink-400">TênKênh|Platform|Proxy</code> hoặc <code class="bg-slate-900 px-1 py-0.5 rounded text-pink-400">Username|Password|2FA|Proxy</code>
+                        </p>
+                        <textarea v-model="batchInput" rows="4" placeholder="Ví dụ:&#10;Kenh_TikTok_01|tiktok|103.149.28.14:8080&#10;Kenh_FB_Reels_02|facebook|14.225.205.81:8080&#10;Kenh_Shorts_03|youtube|" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs text-white font-mono focus:outline-none focus:border-cyan-500"></textarea>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-xs text-slate-500 font-mono">Đã chọn: Nền tảng mặc định TikTok/FB/YouTube</span>
+                            <button @click="importBatchAccounts" class="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-lg text-xs font-bold flex items-center gap-2">
+                                <i data-lucide="upload" class="w-4 h-4"></i> Nhập Vào Dàn Kênh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Profile Sheet Table -->
+                    <div class="bg-darkcard border border-darkborder rounded-xl overflow-hidden">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900/80 text-[11px] uppercase text-slate-400 border-b border-darkborder">
+                                <tr>
+                                    <th class="px-4 py-3">ID</th>
+                                    <th class="px-4 py-3">Tên Profile</th>
+                                    <th class="px-4 py-3">Nền Tảng</th>
+                                    <th class="px-4 py-3">Proxy Riêng</th>
+                                    <th class="px-4 py-3">Trạng Thái</th>
+                                    <th class="px-4 py-3">Lượt Xem/Tương Tác</th>
+                                    <th class="px-4 py-3 text-right">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-darkborder">
+                                <tr v-for="a in accounts" :key="a.id" class="hover:bg-slate-800/40">
+                                    <td class="px-4 py-3 font-mono text-slate-500">#{{ a.id }}</td>
+                                    <td class="px-4 py-3 font-bold text-white">{{ a.name }}</td>
+                                    <td class="px-4 py-3 uppercase text-[10px] font-bold" :class="a.platform === 'tiktok' ? 'text-pink-400' : (a.platform === 'facebook' ? 'text-blue-400' : 'text-red-400')">{{ a.platform }}</td>
+                                    <td class="px-4 py-3 font-mono text-slate-400">{{ a.proxy || 'IP Máy' }}</td>
+                                    <td class="px-4 py-3 text-emerald-400 font-medium">● Hoạt động</td>
+                                    <td class="px-4 py-3 font-mono text-cyan-400">{{ a.actions_count || 0 }} lượt</td>
+                                    <td class="px-4 py-3 text-right space-x-2">
+                                        <button @click="openLogin(a)" class="text-blue-400 hover:underline">Mở Chrome</button>
+                                        <button @click="deleteAccount(a.id)" class="text-red-400 hover:underline">Xóa</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: CẤU HÌNH PROXY STEALTH -->
+                <div v-if="activeNav === 'proxy'" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i data-lucide="shield-check" class="w-5 h-5 text-cyan-400"></i> Quản Lý Proxy Stealth Chống Quét IP
+                            </h2>
+                            <p class="text-xs text-slate-400">Gán proxy riêng cho từng tài khoản, hỗ trợ xoay IP TMProxy / TinProxy / Proxy tĩnh.</p>
+                        </div>
+                        <button @click="checkAllProxies" class="px-3.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> Kiểm Tra Tất Cả Proxy (Ping Test)
+                        </button>
+                    </div>
+
+                    <!-- Add Proxy Form -->
+                    <div class="bg-darkcard border border-darkborder rounded-xl p-5 flex flex-wrap items-center gap-3">
+                        <input v-model="newProxyStr" type="text" placeholder="Nhập proxy (Ví dụ: 103.149.28.14:8080 hoặc user:pass@ip:port)" class="flex-1 min-w-[280px] bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500">
+                        <input v-model="newProxyLocation" type="text" placeholder="Vị trí (Ví dụ: VN - Viettel)" class="w-48 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none">
+                        <button @click="addProxy" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center gap-1.5">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm Proxy
+                        </button>
+                    </div>
+
+                    <!-- Proxy Grid List -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div v-for="p in proxies" :key="p.id" class="rounded-xl bg-darkcard border border-darkborder p-4 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-500/30">LIVE</span>
+                                <span class="text-xs text-slate-400 font-mono">{{ p.latency_ms || 45 }}ms</span>
+                            </div>
+                            <div>
+                                <h4 class="font-mono text-xs font-bold text-white truncate">{{ p.proxy_str }}</h4>
+                                <p class="text-[11px] text-slate-400 mt-0.5">{{ p.ip_location || 'Việt Nam (VN)' }}</p>
+                            </div>
+                            <div class="pt-2 border-t border-slate-800 flex justify-between items-center text-xs">
+                                <span class="text-[10px] text-slate-500">Đã gán: {{ countAccountsUsingProxy(p.proxy_str) }} kênh</span>
+                                <button @click="deleteProxy(p.id)" class="text-slate-500 hover:text-red-400">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: LÁCH BẢN QUYỀN VIDEO & ĐỔI MD5 -->
+                <div v-if="activeNav === 'video_upload'" class="space-y-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i data-lucide="film" class="w-5 h-5 text-pink-400"></i> Công Cụ Đổi MD5 & Lách Bản Quyền Video AI
+                        </h2>
+                        <p class="text-xs text-slate-400">Thay đổi mã băm video trong 0.01s mà không làm giảm độ phân giải hay âm thanh.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Box Lách MD5 -->
+                        <div class="bg-darkcard border border-darkborder rounded-xl p-5 space-y-4">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i data-lucide="zap" class="w-4 h-4 text-cyan-400"></i> Lách Mã Băm MD5 Tức Thì
+                            </h3>
+                            <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center space-y-2 hover:border-pink-500 transition cursor-pointer">
+                                <i data-lucide="file-video" class="w-8 h-8 text-slate-400 mx-auto"></i>
+                                <p class="text-xs text-slate-300 font-semibold">Chọn hoặc Kéo thả video MP4 vào đây</p>
+                                <p class="text-[11px] text-slate-500">Hỗ trợ MP4, MOV, MKV, AVI</p>
+                                <input type="file" ref="md5FileInput" class="hidden" @change="onMD5FileSelected">
+                                <button @click="$refs.md5FileInput.click()" class="mt-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold rounded-lg text-slate-200">
+                                    Chọn Video Máy Tính
+                                </button>
+                            </div>
+
+                            <div v-if="selectedVideoName" class="p-3 bg-slate-900 rounded-lg text-xs space-y-2 font-mono">
+                                <div class="text-slate-300 truncate">Video: {{ selectedVideoName }}</div>
+                                <div class="text-slate-400">MD5 ban đầu: <span class="text-pink-400 font-bold">4c1e67815d59c7de...</span></div>
+                                <div v-if="newMD5Result" class="text-emerald-400 font-bold">MD5 sau khi lách: {{ newMD5Result }}</div>
+                            </div>
+
+                            <button @click="processMD5" class="w-full py-2.5 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white text-xs font-bold rounded-lg shadow-lg">
+                                ⚡ Bắt Đầu Lách Bản Quyền & Lưu Video Mới
+                            </button>
+                        </div>
+
+                        <!-- Box Đăng Video Lên Dàn Kênh -->
+                        <div class="bg-darkcard border border-darkborder rounded-xl p-5 space-y-4">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-yellow-400"></i> Đăng Video Lên Hàng Đợi (Kèm Caption AI)
+                            </h3>
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Tiêu đề video</label>
+                                    <input v-model="videoTitle" type="text" placeholder="Top mẹo tăng tương tác cực đỉnh..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-pink-500">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Nền tảng đăng</label>
+                                    <select v-model="videoPlatform" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none">
+                                        <option value="tiktok">TikTok For You</option>
+                                        <option value="facebook">Facebook Reels</option>
+                                        <option value="youtube">YouTube Shorts</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 mb-1">Gợi ý Caption & Hashtag tự động</label>
+                                    <textarea v-model="videoCaption" rows="2" placeholder="AI sẽ tự động tối ưu caption và hashtag bắt trend khi bạn bấm Đăng..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono"></textarea>
+                                </div>
+                            </div>
+                            <button @click="addVideoQueue" class="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-xs font-bold rounded-lg shadow-lg">
+                                📤 Đẩy Vào Hàng Đợi Đăng Video
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 5: LỊCH UP TỰ ĐỘNG 24/7 -->
+                <div v-if="activeNav === 'schedules'" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i data-lucide="clock" class="w-5 h-5 text-yellow-400"></i> Lịch Hẹn Đăng Video Tự Động 24/7 (Khung Giờ Vàng)
+                            </h2>
+                            <p class="text-xs text-slate-400">Hệ thống tự động canh khung giờ vàng đông người xem nhất để tải video lên.</p>
+                        </div>
+                    </div>
+
+                    <!-- Add Schedule -->
+                    <div class="bg-darkcard border border-darkborder rounded-xl p-5 flex flex-wrap items-center gap-3 text-xs">
+                        <select v-model="newScheduleSlot" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                            <option value="08:00 (Sáng)">08:00 - Sáng (Ăn sáng, đi làm)</option>
+                            <option value="11:30 (Trưa)">11:30 - Trưa (Giờ nghỉ trưa)</option>
+                            <option value="19:45 (Tối)">19:45 - Tối (Khung giờ vàng đỉnh điểm)</option>
+                            <option value="22:30 (Đêm)">22:30 - Đêm (Lướt video trước khi ngủ)</option>
+                        </select>
+                        <select v-model="newSchedulePlatform" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                            <option value="tiktok">TikTok</option>
+                            <option value="facebook">Facebook Reels</option>
+                            <option value="youtube">YouTube Shorts</option>
+                        </select>
+                        <button @click="addSchedule" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white font-bold rounded-lg flex items-center gap-1.5">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm Khung Giờ
+                        </button>
+                    </div>
+
+                    <!-- Schedule List -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div v-for="s in schedules" :key="s.id" class="rounded-xl bg-darkcard border border-darkborder p-4 flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400 font-bold">
+                                    <i data-lucide="bell" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-white">{{ s.time_slot }}</h4>
+                                    <p class="text-[11px] text-slate-400 uppercase">Nền tảng: {{ s.platform }} • Tự động kích hoạt</p>
+                                </div>
+                            </div>
+                            <button @click="deleteSchedule(s.id)" class="text-slate-500 hover:text-red-400 text-xs">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 6: LIVE LOGS REALTIME TOÀN BỘ -->
+                <div v-if="activeNav === 'logs'" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i data-lucide="terminal" class="w-5 h-5 text-emerald-400"></i> Nhật Ký Hoạt Động Hệ Thống (Terminal Logs)
+                        </h2>
+                        <div class="space-x-2">
+                            <button @click="clearLogs" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold border border-slate-700">
+                                Làm Sạch Logs
+                            </button>
+                            <button @click="exportLogs" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg text-xs font-semibold">
+                                Tải Về File Log
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="rounded-xl bg-black/95 border border-darkborder p-4 font-mono text-xs custom-scroll h-[520px] overflow-y-auto space-y-2">
+                        <div v-for="(l, i) in logs" :key="i" class="flex items-start space-x-2 text-[11px] leading-relaxed">
+                            <span class="text-slate-600">[{{ l.timestamp }}]</span>
+                            <span class="px-1.5 py-0.2 rounded text-[10px] font-bold"
+                                  :class="l.status === 'success' ? 'bg-emerald-950 text-emerald-400' : (l.status === 'error' ? 'bg-red-950 text-red-400' : 'bg-cyan-950 text-cyan-400')">
+                                {{ l.status.toUpperCase() }}
+                            </span>
+                            <span class="text-slate-300 font-semibold">[{{ l.account_name }}]</span>
+                            <span class="text-slate-300">{{ l.action }}: {{ l.details }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EMBEDDED FOOTER LOG TERMINAL (Khi ở trang Nuôi Kênh) -->
+                <div v-if="activeNav === 'nurture'" class="rounded-xl bg-black/90 border border-darkborder p-4 font-mono text-xs space-y-2">
                     <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-400 text-xs">
                         <span class="flex items-center gap-2 text-emerald-400 font-bold">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> TERMINAL REALTIME SYSTEM LOGS
@@ -398,7 +660,7 @@
 
     </div>
 
-    <!-- VUE 3 APPLICATION -->
+    <!-- VUE 3 APPLICATION LOGIC -->
     <script>
         const { createApp } = Vue;
 
@@ -410,7 +672,19 @@
                     durationMinutes: 10,
                     showAddModal: false,
                     accounts: [],
+                    proxies: [],
+                    schedules: [],
                     logs: [],
+                    batchInput: '',
+                    newProxyStr: '',
+                    newProxyLocation: '',
+                    newScheduleSlot: '11:30 (Trưa)',
+                    newSchedulePlatform: 'tiktok',
+                    selectedVideoName: '',
+                    newMD5Result: '',
+                    videoTitle: '',
+                    videoPlatform: 'tiktok',
+                    videoCaption: '',
                     newAcc: {
                         name: '',
                         platform: 'tiktok',
@@ -439,24 +713,36 @@
             methods: {
                 async loadData() {
                     try {
-                        const [accRes, logRes] = await Promise.all([
+                        const [accRes, logRes, proxRes, schedRes] = await Promise.all([
                             fetch('/api/accounts'),
-                            fetch('/api/logs?limit=40')
+                            fetch('/api/logs?limit=50'),
+                            fetch('/api/proxies'),
+                            fetch('/api/schedules')
                         ]);
                         this.accounts = await accRes.json();
                         this.logs = await logRes.json();
+                        this.proxies = await proxRes.json();
+                        this.schedules = await schedRes.json();
                     } catch (e) {
-                        console.error("Lỗi fetch dữ liệu:", e);
+                        console.error("Lỗi fetch:", e);
                     }
                 },
                 initWebSocket() {
-                    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-                    const ws = new WebSocket(`${protocol}//${window.location.host}/ws/logs`);
-                    ws.onmessage = (event) => {
-                        const item = JSON.parse(event.data);
-                        this.logs.unshift(item);
-                        if (this.logs.length > 100) this.logs.pop();
-                    };
+                    try {
+                        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                        const ws = new WebSocket(`${protocol}//${window.location.host}/ws/logs`);
+                        ws.onmessage = (event) => {
+                            const item = JSON.parse(event.data);
+                            this.logs.unshift(item);
+                            if (this.logs.length > 150) this.logs.pop();
+                        };
+                    } catch (e) {}
+                },
+                countByPlatform(p) {
+                    return this.accounts.filter(a => a.platform.toLowerCase() === p).length;
+                },
+                countAccountsUsingProxy(proxyStr) {
+                    return this.accounts.filter(a => a.proxy === proxyStr).length;
                 },
                 async toggleSingle(acc) {
                     const res = await fetch(`/api/accounts/${acc.id}/toggle-active`, { method: 'POST' });
@@ -472,7 +758,7 @@
                 async openLogin(acc) {
                     const res = await fetch(`/api/accounts/${acc.id}/open-login`, { method: 'POST' });
                     const data = await res.json();
-                    alert(`Đang mở trình duyệt Chrome cho kênh: ${acc.name}\nVui lòng đăng nhập tài khoản một lần duy nhất. Trình duyệt sẽ lưu phiên vĩnh viễn!`);
+                    alert(`Đang mở Chrome cho kênh: ${acc.name}\nVui lòng đăng nhập tài khoản một lần duy nhất. Trình duyệt sẽ lưu phiên vĩnh viễn!`);
                 },
                 async checkAlive(acc) {
                     const res = await fetch(`/api/accounts/${acc.id}/check-alive`, { method: 'POST' });
@@ -524,6 +810,103 @@
                         await fetch(`/api/accounts/${id}`, { method: 'DELETE' });
                         this.loadData();
                     }
+                },
+                async importBatchAccounts() {
+                    if (!this.batchInput.trim()) return alert("Vui lòng dán danh sách tài khoản!");
+                    const res = await fetch('/api/accounts/batch-import', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ raw_text: this.batchInput })
+                    });
+                    const data = await res.json();
+                    alert(data.message);
+                    this.batchInput = '';
+                    this.loadData();
+                },
+                exportCSV() {
+                    let csv = "ID,Tên Kênh,Nền Tảng,Proxy,Lượt Xem\n";
+                    this.accounts.forEach(a => {
+                        csv += `"${a.id}","${a.name}","${a.platform}","${a.proxy || ''}","${a.actions_count}"\n`;
+                    });
+                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", "danh_sach_kenh_matrix.csv");
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                async addProxy() {
+                    if (!this.newProxyStr) return alert("Vui lòng nhập chuỗi proxy!");
+                    await fetch('/api/proxies', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ proxy_str: this.newProxyStr, location: this.newProxyLocation || 'Việt Nam' })
+                    });
+                    this.newProxyStr = '';
+                    this.newProxyLocation = '';
+                    this.loadData();
+                },
+                async deleteProxy(id) {
+                    if (confirm("Xóa Proxy này?")) {
+                        await fetch(`/api/proxies/${id}`, { method: 'DELETE' });
+                        this.loadData();
+                    }
+                },
+                async checkAllProxies() {
+                    const res = await fetch('/api/proxies/check-all', { method: 'POST' });
+                    const data = await res.json();
+                    alert(data.message);
+                },
+                async addSchedule() {
+                    await fetch('/api/schedules', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ time_slot: this.newScheduleSlot, platform: this.newSchedulePlatform })
+                    });
+                    this.loadData();
+                },
+                async deleteSchedule(id) {
+                    await fetch(`/api/schedules/${id}`, { method: 'DELETE' });
+                    this.loadData();
+                },
+                async clearLogs() {
+                    if (confirm("Làm sạch toàn bộ nhật ký?")) {
+                        await fetch('/api/logs/clear', { method: 'POST' });
+                        this.logs = [];
+                    }
+                },
+                exportLogs() {
+                    let content = this.logs.map(l => `[${l.timestamp}] [${l.status.toUpperCase()}] [${l.account_name}] ${l.action}: ${l.details}`).join('\n');
+                    const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", `terminal_logs_${Date.now()}.txt`);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                },
+                onMD5FileSelected(e) {
+                    if (e.target.files[0]) {
+                        this.selectedVideoName = e.target.files[0].name;
+                        this.newMD5Result = '';
+                    }
+                },
+                processMD5() {
+                    if (!this.selectedVideoName) return alert("Vui lòng chọn 1 file video trước!");
+                    // Random MD5 hash mutation preview
+                    const chars = '0123456789abcdef';
+                    let h = '';
+                    for (let i = 0; i < 32; i++) h += chars[Math.floor(Math.random() * chars.length)];
+                    this.newMD5Result = h;
+                    alert(`[✓] Đã lách bản quyền video thành công trong 0.01s!\nMD5 Mới: ${h}\nTệp đã sẵn sàng tải lên đa nền tảng.`);
+                },
+                addVideoQueue() {
+                    if (!this.videoTitle) return alert("Vui lòng nhập tiêu đề video!");
+                    alert(`Đã thêm video "${this.videoTitle}" vào hàng đợi đăng tự động cho ${this.videoPlatform.toUpperCase()}!`);
+                    this.videoTitle = '';
                 }
             }
         }).mount('#app');

@@ -114,6 +114,21 @@ class handler(BaseHTTPRequestHandler):
             self.send_json(DEMO_LOGS)
             return
 
+        elif path.endswith("/proxies"):
+            self.send_json([
+                {"id": 1, "proxy_str": "103.149.28.14:8080", "status": "live", "latency_ms": 38, "ip_location": "Việt Nam - VNPT"},
+                {"id": 2, "proxy_str": "14.225.205.81:8080", "status": "live", "latency_ms": 42, "ip_location": "Việt Nam - Viettel"},
+                {"id": 3, "proxy_str": "104.28.192.5:3128", "status": "live", "latency_ms": 65, "ip_location": "United States (US)"}
+            ])
+            return
+
+        elif path.endswith("/schedules"):
+            self.send_json([
+                {"id": 1, "platform": "tiktok", "time_slot": "11:30 (Trưa)", "status": "active"},
+                {"id": 2, "platform": "facebook", "time_slot": "19:45 (Tối)", "status": "active"}
+            ])
+            return
+
         elif path.endswith("/videos"):
             self.send_json([])
             return
@@ -129,6 +144,18 @@ class handler(BaseHTTPRequestHandler):
             return
         elif "toggle-all" in path:
             self.send_json({"success": True, "message": "Đã cập nhật toàn bộ kênh"})
+            return
+        elif "batch-import" in path:
+            self.send_json({"success": True, "count": 3, "message": "Đã nhập tài khoản thành công"})
+            return
+        elif "proxies" in path:
+            self.send_json({"success": True, "message": "Đã thêm Proxy Stealth"})
+            return
+        elif "schedules" in path:
+            self.send_json({"success": True, "message": "Đã lên lịch up tự động"})
+            return
+        elif "logs/clear" in path:
+            self.send_json({"success": True, "message": "Đã làm sạch nhật ký"})
             return
         elif "open-login" in path:
             self.send_json({"success": True, "message": "Vui lòng mở ứng dụng trên máy tính cục bộ để mở trình duyệt Chrome vật lý!"})
