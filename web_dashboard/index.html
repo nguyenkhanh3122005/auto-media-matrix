@@ -1128,7 +1128,7 @@
         </div>
 
         <!-- MODAL AUTH: ĐĂNG NHẬP / ĐĂNG KÝ (USER & ADMIN RIÊNG) -->
-        <div v-if="showAuthModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div v-if="showAuthModal" @click.self="showAuthModal = false" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
             <div class="bg-darkcard border border-darkborder rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl">
                 <!-- Modal Tabs -->
                 <div class="flex border-b border-slate-800 pb-3 justify-between items-center">
@@ -1206,11 +1206,16 @@
         </div>
 
         <!-- MODAL THÊM KÊNH MỚI -->
-        <div v-if="showAddModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div class="bg-darkcard border border-darkborder rounded-2xl w-full max-w-md p-6 space-y-4">
-                <h3 class="text-base font-bold text-white flex items-center gap-2">
-                    <i data-lucide="plus-circle" class="w-5 h-5 text-neoncyan"></i> Thêm Tài Khoản Vào Dàn Kênh
-                </h3>
+        <div v-if="showAddModal" @click.self="showAddModal = false" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-darkcard border border-darkborder rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl relative">
+                <div class="flex justify-between items-center border-b border-darkborder pb-3">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5 text-neoncyan"></i> Thêm Tài Khoản Vào Dàn Kênh
+                    </h3>
+                    <button @click="showAddModal = false" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
                 <div class="space-y-3 text-xs">
                     <div>
                         <label class="block text-slate-400 mb-1">Tên Kênh / Ký hiệu</label>
@@ -1326,6 +1331,14 @@
                 setInterval(this.loadData, 3000); // 3s polling cập nhật realtime
                 setTimeout(() => lucide.createIcons(), 300);
                 this.startPreviewTicker();
+
+                // Lắng nghe phím ESC để đóng các popup/modal nhanh chóng
+                window.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.showAddModal = false;
+                        this.showAuthModal = false;
+                    }
+                });
             },
             updated() {
                 lucide.createIcons();
@@ -1356,10 +1369,22 @@
                         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
                         const ws = new WebSocket(`${protocol}//${window.location.host}/ws/logs`);
                         ws.onmessage = (event) => {
-                            const item = JSON.parse(event.data);
-                            this.logs.unshift(item);
+                            try {
+                                const item = JSON.parse(event.data);
+                                this.logs.unshift(item);
+                            } catch(err) {
+                                this.logs.unshift({
+                                    id: Date.now(),
+                                    time: new Date().toLocaleTimeString(),
+                                    type: 'INFO',
+                                    level: 'INFO',
+                                    message: event.data,
+                                    account_name: 'Live Stream'
+                                });
+                            }
                             if (this.logs.length > 150) this.logs.pop();
                         };
+                        ws.onerror = () => {};
                     } catch (e) {}
                 },
                 // --- AUTH METHODS ---
