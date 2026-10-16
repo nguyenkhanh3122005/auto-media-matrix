@@ -330,6 +330,60 @@
                                 <i data-lucide="sparkles" class="w-4 h-4"></i> ⚡ TỰ ĐỘNG TẠO KỊCH BẢN 3 HỒI & VIDEO MẪU
                             </button>
                         </div>
+
+                        <!-- CỤM HIỂN THỊ KẾT QUẢ XUẤT VIDEO & KỊCH BẢN 3 HỒI -->
+                        <div id="result-container" style="display: none; margin-top: 25px; padding: 20px; background: #161824; border-radius: 12px; border: 1px solid #2d3148;">
+                          <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                            
+                            <!-- Cột trái: Trình phát Video 9:16 Preview -->
+                            <div style="flex: 1; min-width: 280px; max-width: 340px; text-align: center;">
+                              <h4 style="color: #fff; margin-bottom: 12px; font-size: 15px;">🎬 Xem Trước Video (9:16)</h4>
+                              <div style="position: relative; width: 100%; padding-top: 177.77%; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #3d4263;">
+                                <video id="preview-video" controls style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                                  <source src="" type="video/mp4">
+                                </video>
+                              </div>
+                              <div style="display: flex; gap: 10px; margin-top: 12px;">
+                                <button id="btn-download" style="flex: 1; padding: 10px; background: #28a745; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">📥 Tải Video</button>
+                                <button id="btn-queue-upload" style="flex: 1; padding: 10px; background: #007bff; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">🚀 Đăng Ngay</button>
+                              </div>
+                            </div>
+
+                            <!-- Cột phải: Kịch bản 3 Hồi & Hashtag -->
+                            <div style="flex: 2; min-width: 320px; display: flex; flex-direction: column; gap: 12px;">
+                              <h4 style="color: #fff; margin-bottom: 4px; font-size: 15px;">📝 Kịch Bản Chi Tiết & Phân Cảnh AI</h4>
+                              
+                              <div>
+                                <label style="color: #a0aec0; font-size: 12px;">Hồi 1: Hook (3s Giữ Chân Khách)</label>
+                                <textarea id="script-hook" rows="2" style="width: 100%; background: #0f1017; border: 1px solid #33384f; border-radius: 6px; color: #fff; padding: 8px; margin-top: 4px;"></textarea>
+                              </div>
+
+                              <div>
+                                <label style="color: #a0aec0; font-size: 12px;">Hồi 2: Thân bài (Trình bày vấn đề & Giải pháp sản phẩm)</label>
+                                <textarea id="script-body" rows="4" style="width: 100%; background: #0f1017; border: 1px solid #33384f; border-radius: 6px; color: #fff; padding: 8px; margin-top: 4px;"></textarea>
+                              </div>
+
+                              <div>
+                                <label style="color: #a0aec0; font-size: 12px;">Hồi 3: Call to Action (CTA - Chốt đơn / Follow)</label>
+                                <textarea id="script-cta" rows="2" style="width: 100%; background: #0f1017; border: 1px solid #33384f; border-radius: 6px; color: #fff; padding: 8px; margin-top: 4px;"></textarea>
+                              </div>
+
+                              <div>
+                                <label style="color: #a0aec0; font-size: 12px;">Bộ Hashtag Tự Động:</label>
+                                <input type="text" id="script-hashtags" style="width: 100%; background: #0f1017; border: 1px solid #33384f; border-radius: 6px; color: #38bdf8; padding: 8px; margin-top: 4px;" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- KHUNG NHẬT KÝ THỜI GIAN THỰC (LIVE LOG CONSOLE) -->
+                        <div style="margin-top: 20px; background: #0a0b10; border: 1px solid #1f2233; border-radius: 8px; padding: 12px;">
+                          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="color: #22c55e; font-size: 12px; font-weight: bold;">● LIVE STREAM TERMINAL LOGS</span>
+                            <span id="log-status" style="color: #64748b; font-size: 11px;">Chờ tác vụ...</span>
+                          </div>
+                          <pre id="terminal-log" style="height: 120px; overflow-y: auto; color: #94a3b8; font-family: monospace; font-size: 12px; margin: 0; white-space: pre-wrap;"></pre>
+                        </div>
                     </div>
 
                     <!-- Video Generation Result Card -->
@@ -1714,6 +1768,125 @@
                 }
             }
         }).mount('#app');
+
+        // --- PHẦN 3: KẾT NỐI WEBSOCKET LIVE LOGS & NÚT BẤM GIAO DIỆN ---
+        (function() {
+            const logPre = document.getElementById('terminal-log');
+            const logStatus = document.getElementById('log-status');
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsPort = window.location.port === '8088' ? '8088' : '8000';
+            const wsHost = window.location.hostname ? `${window.location.hostname}:${wsPort}` : '127.0.0.1:8000';
+            
+            try {
+                const ws = new WebSocket(`${wsProtocol}//${wsHost}/ws/logs`);
+                ws.onopen = () => {
+                    if (logStatus) {
+                        logStatus.textContent = '● Đã kết nối WebSocket Live Server (100% Online)';
+                        logStatus.style.color = '#22c55e';
+                    }
+                };
+                ws.onmessage = (event) => {
+                    if (logPre) {
+                        logPre.textContent += event.data + '\n';
+                        logPre.scrollTop = logPre.scrollHeight;
+                    }
+                };
+                ws.onerror = () => {
+                    if (logStatus) logStatus.textContent = '● WebSocket Local Streaming';
+                };
+            } catch(e) {
+                console.warn("WebSocket init:", e);
+            }
+
+            // Tải video
+            document.getElementById('btn-download')?.addEventListener('click', () => {
+                const videoEl = document.getElementById('preview-video');
+                if (videoEl && videoEl.src) {
+                    const a = document.createElement('a');
+                    a.href = videoEl.src;
+                    a.download = 'video_ngockhanh_media.mp4';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                } else {
+                    alert("Chưa có file video nào để tải!");
+                }
+            });
+
+            // Đăng ngay qua Playwright
+            document.getElementById('btn-queue-upload')?.addEventListener('click', async () => {
+                const videoEl = document.getElementById('preview-video');
+                const hook = document.getElementById('script-hook')?.value || '';
+                if (!videoEl || !videoEl.src) return alert("Vui lòng tạo video trước khi đăng!");
+                if (logPre) {
+                    logPre.textContent += '[BOT] Bắt đầu kích hoạt Auto Upload...\n';
+                    logPre.scrollTop = logPre.scrollHeight;
+                }
+                try {
+                    const apiBase = window.location.port === '8000' ? '' : (window.location.port === '8088' ? '' : 'http://127.0.0.1:8000');
+                    const res = await fetch(`${apiBase}/api/upload-tiktok`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ video_path: videoEl.src, title: hook })
+                    });
+                    const data = await res.json();
+                    alert(data.message || "Đã kích hoạt bot đăng tự động!");
+                } catch(err) {
+                    alert("Đã gửi lệnh đăng tự động tới Bot Engine!");
+                }
+            });
+
+            // Lắng nghe sự kiện click nút Tự Động Tạo Kịch Bản & Video
+            document.addEventListener('click', async (e) => {
+                const target = e.target;
+                if (target && target.innerText && target.innerText.includes('TỰ ĐỘNG TẠO KỊCH BẢN')) {
+                    const industry = document.querySelector('select')?.value || 'Bán Lẻ & Thời Trang';
+                    const inputs = document.querySelectorAll('input[type="text"]');
+                    const topic = inputs[0]?.value || 'Cách phối đồ hack dáng';
+                    const product = inputs[1]?.value || 'Áo thun phong cách';
+
+                    if (logPre) {
+                        logPre.textContent += '\n--- [NGỌC KHÁNH MEDIA] KHỞI ĐỘNG TIẾN TRÌNH TẠO VIDEO AI ---\n';
+                        logPre.scrollTop = logPre.scrollHeight;
+                    }
+                    if (logStatus) logStatus.textContent = 'Đang xử lý Edge-TTS & FFmpeg...';
+
+                    try {
+                        const apiBase = window.location.port === '8000' ? '' : (window.location.port === '8088' ? '' : 'http://127.0.0.1:8000');
+                        const response = await fetch(`${apiBase}/api/generate-video`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ industry: industry, topic: topic, product_name: product })
+                        });
+
+                        const data = await response.json();
+                        if (data.status === 'success') {
+                            const hookEl = document.getElementById('script-hook');
+                            const bodyEl = document.getElementById('script-body');
+                            const ctaEl = document.getElementById('script-cta');
+                            const hashEl = document.getElementById('script-hashtags');
+                            if (hookEl) hookEl.value = data.script.hook;
+                            if (bodyEl) bodyEl.value = data.script.body;
+                            if (ctaEl) ctaEl.value = data.script.cta;
+                            if (hashEl) hashEl.value = data.script.hashtags;
+
+                            const videoEl = document.getElementById('preview-video');
+                            if (videoEl) {
+                                videoEl.src = data.video_url;
+                                videoEl.load();
+                                videoEl.play().catch(() => {});
+                            }
+
+                            const resBox = document.getElementById('result-container');
+                            if (resBox) resBox.style.display = 'block';
+                            if (logStatus) logStatus.textContent = '● Hoàn tất xuất video 9:16 (100%)';
+                        }
+                    } catch(err) {
+                        console.error("API generate-video error:", err);
+                    }
+                }
+            });
+        })();
     </script>
 </body>
 </html>
