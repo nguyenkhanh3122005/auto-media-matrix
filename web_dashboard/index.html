@@ -1339,10 +1339,14 @@
                             fetch('/api/proxies'),
                             fetch('/api/schedules')
                         ]);
-                        this.accounts = await accRes.json();
-                        this.logs = await logRes.json();
-                        this.proxies = await proxRes.json();
-                        this.schedules = await schedRes.json();
+                        const accJson = await accRes.json();
+                        this.accounts = Array.isArray(accJson) ? accJson : (accJson.data || []);
+                        const logJson = await logRes.json();
+                        this.logs = Array.isArray(logJson) ? logJson : (logJson.data || []);
+                        const proxJson = await proxRes.json();
+                        this.proxies = Array.isArray(proxJson) ? proxJson : (proxJson.data || []);
+                        const schedJson = await schedRes.json();
+                        this.schedules = Array.isArray(schedJson) ? schedJson : (schedJson.data || []);
                     } catch (e) {
                         console.error("Lỗi fetch:", e);
                     }
