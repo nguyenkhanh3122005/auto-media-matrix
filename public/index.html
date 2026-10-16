@@ -1092,13 +1092,13 @@
 
                     <div class="rounded-xl bg-black/95 border border-darkborder p-4 font-mono text-xs custom-scroll h-[520px] overflow-y-auto space-y-2">
                         <div v-for="(l, i) in logs" :key="i" class="flex items-start space-x-2 text-[11px] leading-relaxed">
-                            <span class="text-slate-600">[{{ l.timestamp }}]</span>
+                            <span class="text-slate-600">[{{ l.timestamp || l.created_at || l.time || '15:00:00' }}]</span>
                             <span class="px-1.5 py-0.2 rounded text-[10px] font-bold"
-                                  :class="l.status === 'success' ? 'bg-emerald-950 text-emerald-400' : (l.status === 'error' ? 'bg-red-950 text-red-400' : 'bg-cyan-950 text-cyan-400')">
-                                {{ l.status.toUpperCase() }}
+                                  :class="(l.status || l.level || l.type || '').toLowerCase() === 'success' ? 'bg-emerald-950 text-emerald-400' : ((l.status || l.level || l.type || '').toLowerCase() === 'error' ? 'bg-red-950 text-red-400' : 'bg-cyan-950 text-cyan-400')">
+                                {{ ((l.status || l.level || l.type || 'INFO') + '').toUpperCase() }}
                             </span>
-                            <span class="text-slate-300 font-semibold">[{{ l.account_name }}]</span>
-                            <span class="text-slate-300">{{ l.action }}: {{ l.details }}</span>
+                            <span class="text-slate-300 font-semibold">[{{ l.account_name || 'Hệ Thống' }}]</span>
+                            <span class="text-slate-300">{{ l.action ? (l.action + (l.details ? ': ' + l.details : (l.message ? ': ' + l.message : ''))) : (l.message || l.details || '') }}</span>
                         </div>
                     </div>
                 </div>
@@ -1113,13 +1113,13 @@
                     </div>
                     <div class="h-32 overflow-y-auto custom-scroll space-y-1.5 pr-2">
                         <div v-for="(l, i) in logs.slice(0, 30)" :key="i" class="flex items-start space-x-2 text-[11px] leading-relaxed">
-                            <span class="text-slate-600">[{{ l.timestamp }}]</span>
+                            <span class="text-slate-600">[{{ l.timestamp || l.created_at || l.time || '15:00:00' }}]</span>
                             <span class="px-1 rounded text-[10px] font-bold"
-                                  :class="l.status === 'success' ? 'bg-emerald-950 text-emerald-400' : (l.status === 'error' ? 'bg-red-950 text-red-400' : 'bg-cyan-950 text-cyan-400')">
-                                {{ l.status.toUpperCase() }}
+                                  :class="(l.status || l.level || l.type || '').toLowerCase() === 'success' ? 'bg-emerald-950 text-emerald-400' : ((l.status || l.level || l.type || '').toLowerCase() === 'error' ? 'bg-red-950 text-red-400' : 'bg-cyan-950 text-cyan-400')">
+                                {{ ((l.status || l.level || l.type || 'INFO') + '').toUpperCase() }}
                             </span>
-                            <span class="text-slate-300 font-semibold">[{{ l.account_name }}]</span>
-                            <span class="text-slate-300">{{ l.action }}: {{ l.details }}</span>
+                            <span class="text-slate-300 font-semibold">[{{ l.account_name || 'Hệ Thống' }}]</span>
+                            <span class="text-slate-300">{{ l.action ? (l.action + (l.details ? ': ' + l.details : (l.message ? ': ' + l.message : ''))) : (l.message || l.details || '') }}</span>
                         </div>
                     </div>
                 </div>
@@ -1763,7 +1763,7 @@
                     }
                 },
                 exportLogs() {
-                    let content = this.logs.map(l => `[${l.timestamp}] [${l.status.toUpperCase()}] [${l.account_name}] ${l.action}: ${l.details}`).join('\n');
+                    let content = this.logs.map(l => `[${l.timestamp || l.created_at || l.time || ''}] [${((l.status || l.level || l.type || 'INFO') + '').toUpperCase()}] [${l.account_name || 'System'}] ${l.action ? (l.action + ': ' + (l.details || '')) : (l.message || '')}`).join('\n');
                     const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement("a");

@@ -351,6 +351,17 @@ async def get_logs(limit: int = 50):
         from database.db import Database
         logs = Database().get_logs(limit)
         if logs:
+            for l in logs:
+                if "status" not in l or not l["status"]:
+                    l["status"] = l.get("level", "info")
+                if "timestamp" not in l or not l["timestamp"]:
+                    l["timestamp"] = l.get("created_at", l.get("time", "15:00:00"))
+                if "details" not in l or not l["details"]:
+                    l["details"] = l.get("message", "")
+                if "action" not in l or not l["action"]:
+                    l["action"] = "Hoạt động"
+                if "account_name" not in l or not l["account_name"]:
+                    l["account_name"] = "Hệ Thống"
             return {
                 "status": "success",
                 "data": logs
@@ -360,8 +371,8 @@ async def get_logs(limit: int = 50):
     return {
         "status": "success",
         "data": [
-            {"id": 1, "time": "14:30:00", "created_at": "14:30:00", "type": "INFO", "level": "INFO", "message": "Hệ thống hoạt động ổn định.", "account_name": "System"},
-            {"id": 2, "time": "14:32:15", "created_at": "14:32:15", "type": "SUCCESS", "level": "SUCCESS", "message": "Video mẫu và kịch bản đã sinh hoàn tất.", "account_name": "AI Pipeline"}
+            {"id": 1, "status": "info", "level": "INFO", "timestamp": "14:30:00", "created_at": "14:30:00", "action": "Khởi động", "details": "Hệ thống hoạt động ổn định.", "message": "Hệ thống hoạt động ổn định.", "account_name": "System"},
+            {"id": 2, "status": "success", "level": "SUCCESS", "timestamp": "14:32:15", "created_at": "14:32:15", "action": "AI Pipeline", "details": "Video mẫu và kịch bản đã sinh hoàn tất.", "message": "Video mẫu và kịch bản đã sinh hoàn tất.", "account_name": "AI Engine"}
         ]
     }
 
