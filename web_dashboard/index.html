@@ -338,10 +338,7 @@
                             <!-- Cột trái: Trình phát Video 9:16 Preview -->
                             <div style="flex: 1; min-width: 280px; max-width: 340px; text-align: center;">
                               <h4 style="color: #fff; margin-bottom: 12px; font-size: 15px;">🎬 Xem Trước Video (9:16)</h4>
-                              <div style="position: relative; width: 100%; padding-top: 177.77%; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #3d4263;">
-                                <video id="preview-video" controls style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
-                                  <source src="" type="video/mp4">
-                                </video>
+                                <video id="preview-video" controls autoplay playsinline preload="auto" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; background: #000;"></video>
                               </div>
                               <div style="display: flex; gap: 10px; margin-top: 12px;">
                                 <button id="btn-download" style="flex: 1; padding: 10px; background: #28a745; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">📥 Tải Video</button>
@@ -1872,9 +1869,24 @@
 
                             const videoEl = document.getElementById('preview-video');
                             if (videoEl) {
-                                videoEl.src = data.video_url;
+                                while (videoEl.firstChild) {
+                                    videoEl.removeChild(videoEl.firstChild);
+                                }
+                                let targetUrl = data.video_url;
+                                if (targetUrl && !targetUrl.startsWith('http')) {
+                                    const base = apiBase ? apiBase : window.location.origin;
+                                    targetUrl = base + targetUrl;
+                                }
+                                videoEl.src = targetUrl;
                                 videoEl.load();
-                                videoEl.play().catch(() => {});
+                                videoEl.muted = false;
+                                const playPromise = videoEl.play();
+                                if (playPromise !== undefined) {
+                                    playPromise.catch(() => {
+                                        videoEl.muted = true;
+                                        videoEl.play().catch(() => {});
+                                    });
+                                }
                             }
 
                             const resBox = document.getElementById('result-container');

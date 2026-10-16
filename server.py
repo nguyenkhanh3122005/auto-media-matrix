@@ -45,6 +45,7 @@ app.add_middleware(
 
 # Phục vụ thư mục static
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+app.mount("/storage", StaticFiles(directory=str(BASE_DIR / "storage")), name="storage")
 
 # Quản lý WebSocket kết nối đẩy log trực tiếp về trình duyệt
 class ConnectionManager:
@@ -133,49 +134,71 @@ def render_dynamic_video(audio_path: str, output_path: str, topic_title: str):
     code_video = str(BASE_DIR / "assets" / "code_typing.mp4")
     app_img = str(BASE_DIR / "assets" / "app_dashboard.png")
 
-    clean_topic = topic_title.replace("'", "").replace('"', '').replace(":", " - ")[:36]
+    import re
+    clean_topic = re.sub(r'[\'":\(\)\[\]\\/]', ' ', topic_title).strip()[:35]
 
     if os.path.exists(code_video) and os.path.exists(app_img):
-        ffmpeg_cmd = [
-            FFMPEG_EXE, "-y",
-            "-stream_loop", "-1", "-i", code_video,
-            "-loop", "1", "-i", app_img,
-            "-i", audio_path,
-            "-filter_complex", (
-                # Đoạn 1: Code typing 5 giây
-                "[0:v]trim=duration=5,scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,setpts=PTS-STARTPTS[v0];"
-                # Đoạn 2: Giao diện Ngọc Khánh Media có zoom nhẹ (ken burns)
-                "[1:v]scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,zoompan=z='min(zoom+0.0015,1.15)':d=900:s=720x1280:fps=25,setpts=PTS-STARTPTS[v1];"
-                # Nối 2 đoạn
-                "[v0][v1]concat=n=2:v=1:a=0[v_base];"
-                # Chèn thanh tiêu đề và logo nổi góc trên
-                f"[v_base]drawbox=y=100:color=0x0f172a@0.9:width=iw:height=150:t=fill,"
-                f"drawtext=text='⚡ NGOC KHANH MEDIA':fontcolor=0x00f0ff:fontsize=22:x=(w-text_w)/2:y=115,"
-                f"drawtext=text='{clean_topic}':fontcolor=white:fontsize=32:x=(w-text_w)/2:y=160[v_out]"
-            ),
-            "-map", "[v_out]",
-            "-map", "2:a",
-            "-c:v", "libx264",
-            "-preset", "veryfast",
-            "-pix_fmt", "yuv420p",
-            "-c:a", "aac",
-            "-b:a", "192k",
-            "-shortest",
-            output_path
-        ]
-    else:
-        # Fallback an toàn nếu chưa có assets
-        ffmpeg_cmd = [
+        try:
+            ffmpeg_cmd = [
+                FFMPEG_EXE, "-y",
+                "-stream_loop", "-1", "-i", code_video,
+                "-loop", "1", "-i", app_img,
+                "-i", audio_path,
+                "-filter_complex", (
+                    "[0:v]trim=duration=5,scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,setpts=PTS-STARTPTS[v0];"
+                    "[1:v]scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,zoompan=z='min(zoom+0.0015,1.15)':d=900:s=720x1280:fps=25,setpts=PTS-STARTPTS[v1];"
+                    "[v0][v1]concat=n=2:v=1:a=0[v_base];"
+                    f"[v_base]drawbox=y=100:color=0x0f172a@0.9:width=iw:height=150:t=fill,"
+                    f"drawtext=text='⚡ NGOC KHANH MEDIA':fontcolor=0x00f0ff:fontsize=22:x=(w-text_w)/2:y=115,"
+                    f"drawtext=text='{clean_topic}':fontcolor=white:fontsize=32:x=(w-text_w)/2:y=160[v_out]"
+                ),
+                "-map", "[v_out]",
+                "-map", "2:a",
+                "-c:v", "libx264",
+                "-preset", "veryfast",
+                "-pix_fmt", "yuv420p",
+                "-c:a", "aac",
+                "-b:a", "192k",
+                "-shortest",
+                output_path
+            ]
+            subprocess.run(ffmpeg_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=40)
+            return output_path
+        except Exception as e:
+            print(f"[!] Lỗi khi render có drawtext: {e}, thử render không có drawtext...")
+
+        try:
+            cmd_no_text = [
+                FFMPEG_EXE, "-y",
+                "-stream_loop", "-1", "-i", code_video,
+                "-loop", "1", "-i", app_img,
+                "-i", audio_path,
+                "-filter_complex", (
+                    "[0:v]trim=duration=5,scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,setpts=PTS-STARTPTS[v0];"
+                    "[1:v]scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,zoompan=z='min(zoom+0.0015,1.15)':d=900:s=720x1280:fps=25,setpts=PTS-STARTPTS[v1];"
+                    "[v0][v1]concat=n=2:v=1:a=0[v_out]"
+                ),
+                "-map", "[v_out]",
+                "-map", "2:a",
+                "-c:v", "libx264",
+                "-preset", "ultrafast",
+                "-pix_fmt", "yuv420p",
+                "-c:a", "aac",
+                "-b:a", "192k",
+                "-shortest",
+                output_path
+            ]
+            subprocess.run(cmd_no_text, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=40)
+            return output_path
+        except Exception as e2:
+            print(f"[!] Lỗi khi render 2 scene: {e2}")
+
+    # Fallback cuối cùng nếu thiếu asset hoặc ffmpeg filter lỗi
+    try:
+        ffmpeg_cmd_fallback = [
             FFMPEG_EXE, "-y",
             "-f", "lavfi", "-i", "color=c=0x0a101f:s=720x1280:r=25",
             "-i", audio_path,
-            "-filter_complex", (
-                f"[0:v]drawbox=y=100:color=0x0f172a@0.85:width=iw:height=140:t=fill,"
-                f"drawtext=text='⚡ NGOC KHANH MEDIA':fontcolor=0x00f0ff:fontsize=22:x=(w-text_w)/2:y=120,"
-                f"drawtext=text='{clean_topic}':fontcolor=white:fontsize=32:x=(w-text_w)/2:y=165[v_out]"
-            ),
-            "-map", "[v_out]",
-            "-map", "1:a",
             "-c:v", "libx264",
             "-preset", "ultrafast",
             "-pix_fmt", "yuv420p",
@@ -183,8 +206,10 @@ def render_dynamic_video(audio_path: str, output_path: str, topic_title: str):
             "-shortest",
             output_path
         ]
-
-    subprocess.run(ffmpeg_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=40)
+        subprocess.run(ffmpeg_cmd_fallback, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=25)
+    except Exception as e3:
+        print(f"[!] Lỗi fallback: {e3}")
+    return output_path
 
 # 3. BOT PLAYWRIGHT STEALTH TỰ ĐỘNG UPLOAD TIKTOK/META
 async def auto_upload_tiktok(video_path: str, title: str, proxy: str = None):
@@ -266,9 +291,17 @@ async def generate_video_api(req: VideoRequest, background_tasks: BackgroundTask
         communicate = edge_tts.Communicate(full_text, voice_name, rate="+5%")
         await communicate.save(audio_path)
     except Exception as te:
-        await manager.broadcast(f"[TTS WARNING] Lỗi Edge-TTS: {te}, kích hoạt âm thanh mẫu...")
-        with open(audio_path, "wb") as f:
-            f.write(b"MOCK_TTS_STREAM_" + os.urandom(1024))
+        await manager.broadcast(f"[TTS WARNING] Lỗi Edge-TTS: {te}, sinh âm thanh dự phòng...")
+        try:
+            # Sinh 6s âm thanh AAC/MP3 chuẩn bằng FFmpeg
+            subprocess.run([
+                FFMPEG_EXE, "-y",
+                "-f", "lavfi", "-i", "sine=frequency=440:duration=6",
+                "-c:a", "libmp3lame", "-b:a", "128k",
+                audio_path
+            ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=10)
+        except Exception:
+            pass
 
     # 3.3. Dựng video hoàn chỉnh bằng FFmpeg (Chuyển cảnh Code typing -> Giao diện phần mềm Ngọc Khánh Media)
     await manager.broadcast("[FFMPEG] Đang dựng video chuyển cảnh động: Gõ code thực tế -> Giao diện Ngọc Khánh Media...")

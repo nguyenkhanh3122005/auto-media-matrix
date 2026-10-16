@@ -98,6 +98,33 @@ class MatrixRequestHandler(SimpleHTTPRequestHandler):
                 self.end_headers()
                 return
 
+        elif path.startswith("/static/"):
+            subpath = path[len("/static/"):]
+            from config import BASE_DIR, DATA_DIR
+            target_file = (BASE_DIR / "static" / subpath).resolve()
+            if not target_file.is_file():
+                target_file = (DATA_DIR / "generated_videos" / subpath).resolve()
+            if not target_file.is_file():
+                target_file = (DATA_DIR / "generated_audios" / subpath).resolve()
+
+            if target_file.is_file():
+                ext = target_file.suffix.lower()
+                content_type = "video/mp4" if ext == ".mp4" else ("audio/mpeg" if ext == ".mp3" else "application/octet-stream")
+                with open(target_file, "rb") as f:
+                    data = f.read()
+                self.send_response(200)
+                self.send_header('Content-Type', content_type)
+                self.send_header('Content-Length', str(len(data)))
+                self.send_header('Accept-Ranges', 'bytes')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                self.wfile.write(data)
+                return
+            else:
+                self.send_response(404)
+                self.end_headers()
+                return
+
         elif path == "/api/stats":
             self.send_json(db.get_stats())
             return
