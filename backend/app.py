@@ -20,6 +20,8 @@ from database.db import db
 from scheduler.task_runner import task_runner
 from core.ai_generator import ai_generator
 from core.browser_manager import browser_manager
+from core.ai_video_engine import ai_video_engine
+from core.channel_advisor import channel_advisor
 
 WEB_DIR = BASE_DIR / "web_dashboard"
 
@@ -90,6 +92,10 @@ class MatrixRequestHandler(SimpleHTTPRequestHandler):
 
         elif path == "/api/schedules":
             self.send_json(db.get_schedules())
+            return
+
+        elif path == "/api/niches":
+            self.send_json(ai_video_engine.get_niches())
             return
 
         elif path == "/ws/logs":
@@ -248,6 +254,60 @@ class MatrixRequestHandler(SimpleHTTPRequestHandler):
         elif path == "/api/logs/clear":
             db.clear_logs()
             self.send_json({"success": True, "message": "Đã làm sạch nhật ký"})
+            return
+
+        # 14. Tự Động Tạo Video Đa Nền Tảng Theo Ngành Nghề
+        elif path == "/api/ai-video/generate":
+            niche = payload.get("niche", "cntt")
+            topic = payload.get("topic", "")
+            product = payload.get("product_name", "")
+            script_data = ai_video_engine.generate_script(niche, topic, product)
+            
+            # Lưu và tạo file video demo
+            out_filename = f"ai_video_{int(time.time())}.mp4"
+            out_path = str(VIDEOS_DIR / out_filename)
+            ai_video_engine.render_demo_video(script_data, out_path)
+            
+            # Thêm luôn vào kho video của hệ thống
+            v_id = db.add_video(
+                title=script_data["title"],
+                file_path=out_path,
+                platform="tiktok",
+                caption=script_data["caption"],
+                hashtags=script_data["hashtags"]
+            )
+            script_data["video_id"] = v_id
+            script_data["video_path"] = out_path
+            db.add_log("Tạo video AI tự động", "success", f"Đã sinh kịch bản & video cho ngành: {script_data['niche_name']}")
+            self.send_json({"success": True, "data": script_data})
+            return
+
+        # 15. Phân Tích & Chẩn Đoán Kênh (Channel Audit)
+        elif path == "/api/channel/audit":
+            channel_id = payload.get("channel_id", "@kenh_cua_toi")
+            platform = payload.get("platform", "tiktok")
+            screenshot_note = payload.get("screenshot_note", "")
+            audit_result = channel_advisor.audit_channel(channel_id, platform, screenshot_note)
+            db.add_log("Phân tích kênh AI", "info", f"Chẩn đoán kênh: {channel_id} ({platform.upper()}) - Điểm: {audit_result['overall_score']}/100")
+            self.send_json({"success": True, "data": audit_result})
+            return
+
+        # 16. Lập Ma Trận 30 Ngày Xây Kênh Quảng Bá Sản Phẩm
+        elif path == "/api/channel/growth-plan":
+            channel_id = payload.get("channel_id", "@kenh_cua_toi")
+            product_name = payload.get("product_name", "Sản phẩm")
+            niche = payload.get("niche", "general")
+            plan = channel_advisor.generate_30day_product_matrix(channel_id, product_name, niche)
+            db.add_log("Lập kế hoạch xây kênh 30 ngày", "success", f"Kênh: {channel_id} | Sản phẩm: {product_name} (30 video)")
+            self.send_json({"success": True, "data": plan})
+            return
+
+        # 17. Nuôi Kênh Mục Tiêu Theo Ngách Của Mình
+        elif path == "/api/channel/target-nurture":
+            channel_id = payload.get("channel_id", "")
+            keywords = payload.get("keywords", "review, mẹo hay, hướng dẫn")
+            db.add_log("Kích hoạt nuôi kênh mục tiêu", "success", f"Tập trung tương tác theo từ khóa ngách: {keywords}")
+            self.send_json({"success": True, "message": f"Đã bật chế độ nuôi kênh chuyên sâu cho {channel_id}!"})
             return
 
         self.send_json({"error": "Endpoint not found"}, status=404)

@@ -20,6 +20,7 @@
                         neoncyan: '#00f2fe',
                         neongreen: '#10b981',
                         neonblue: '#3b82f6',
+                        neonpurple: '#a855f7',
                         glowgreen: '#059669',
                     }
                 }
@@ -41,6 +42,10 @@
         }
         .btn-glow-green:hover {
             box-shadow: 0 0 28px rgba(16, 185, 129, 0.7);
+        }
+        .btn-glow-purple {
+            background: linear-gradient(135deg, #9333ea 0%, #c084fc 100%);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.45);
         }
         .active-tab {
             background: linear-gradient(90deg, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.02) 100%);
@@ -76,7 +81,7 @@
                 </div>
                 <span class="text-slate-600 text-xs">|</span>
                 <span class="text-xs text-slate-400 hidden md:inline-block">
-                    Behavior Multi-Thread • Auto-Tiling Grid • Chrome Stealth Anti-Detect
+                    AI Video Engine • Growth Advisor • Auto-Tiling Grid • Chrome Stealth
                 </span>
             </div>
 
@@ -97,13 +102,37 @@
         <div class="flex-1 flex overflow-hidden">
             
             <!-- LEFT SIDEBAR -->
-            <aside class="w-64 bg-darksidebar border-r border-darkborder flex flex-col justify-between shrink-0 select-none">
+            <aside class="w-64 bg-darksidebar border-r border-darkborder flex flex-col justify-between shrink-0 select-none overflow-y-auto custom-scroll">
                 <div class="py-4 space-y-6">
                     
-                    <!-- Menu Group 1 -->
+                    <!-- Menu Group: TẠO VIDEO & CỐ VẤN KÊNH AI (MỚI) -->
+                    <div class="space-y-1">
+                        <div class="px-5 text-[11px] font-extrabold tracking-wider text-pink-400 uppercase mb-2 flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Sáng Tạo & Xây Kênh AI
+                        </div>
+                        <a href="#" @click.prevent="activeNav = 'ai_video'" :class="activeNav === 'ai_video' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2.5 flex items-center justify-between text-xs font-semibold transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="clapperboard" class="w-4 h-4 text-pink-400"></i> Tạo Video AI Theo Ngành
+                            </span>
+                            <span class="px-1.5 py-0.2 rounded bg-pink-900/50 text-[10px] text-pink-300 font-bold border border-pink-500/30">HOT</span>
+                        </a>
+                        <a href="#" @click.prevent="activeNav = 'growth_matrix'" :class="activeNav === 'growth_matrix' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2.5 flex items-center justify-between text-xs font-semibold transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="trending-up" class="w-4 h-4 text-cyan-400"></i> Xây Kênh & Bán Sản Phẩm
+                            </span>
+                            <span class="text-[10px] text-cyan-300 font-mono">30 Ngày</span>
+                        </a>
+                        <a href="#" @click.prevent="activeNav = 'channel_audit'" :class="activeNav === 'channel_audit' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2.5 flex items-center justify-between text-xs font-semibold transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="scan-face" class="w-4 h-4 text-emerald-400"></i> Cố Vấn & Nuôi Kênh Riêng
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- Menu Group 1: Quản Trị Kênh -->
                     <div class="space-y-1">
                         <div class="px-5 text-[11px] font-bold tracking-wider text-slate-500 uppercase mb-2">
-                            Quản Trị Kênh
+                            Quản Trị Dàn Kênh
                         </div>
                         <a href="#" @click.prevent="activeNav = 'nurture'; filterPlatform = 'all'" :class="activeNav === 'nurture' && filterPlatform === 'all' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2.5 flex items-center justify-between text-xs font-semibold transition-colors">
                             <span class="flex items-center gap-2.5">
@@ -124,10 +153,10 @@
                         </a>
                     </div>
 
-                    <!-- Menu Group 2 -->
+                    <!-- Menu Group 2: Tự Động Hóa Nền Tảng -->
                     <div class="space-y-1">
                         <div class="px-5 text-[11px] font-bold tracking-wider text-slate-500 uppercase mb-2">
-                            Tự Động Hóa Nền Tảng
+                            Nền Tảng
                         </div>
                         <a href="#" @click.prevent="activeNav = 'nurture'; filterPlatform = 'facebook'" :class="activeNav === 'nurture' && filterPlatform === 'facebook' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs transition-colors">
                             <span class="flex items-center gap-2.5">
@@ -149,14 +178,14 @@
                         </a>
                     </div>
 
-                    <!-- Menu Group 3 -->
+                    <!-- Menu Group 3: Video & Tự Động Hóa -->
                     <div class="space-y-1">
                         <div class="px-5 text-[11px] font-bold tracking-wider text-slate-500 uppercase mb-2">
-                            Video & Tự Động Hóa
+                            Video & Lịch Đăng
                         </div>
                         <a href="#" @click.prevent="activeNav = 'video_upload'" :class="activeNav === 'video_upload' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs font-semibold transition-colors">
                             <span class="flex items-center gap-2.5">
-                                <i data-lucide="film" class="w-4 h-4"></i> Đổi MD5 & Lách Bản Quyền
+                                <i data-lucide="film" class="w-4 h-4"></i> Đổi MD5 & Lách Video
                             </span>
                         </a>
                         <a href="#" @click.prevent="activeNav = 'schedules'" :class="activeNav === 'schedules' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs font-semibold transition-colors">
@@ -185,17 +214,290 @@
                         <span class="text-slate-500">Phiên bản:</span>
                         <span class="text-slate-300 font-medium">v2026 PRO MAX</span>
                     </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-slate-500">Cơ chế:</span>
-                        <span class="text-cyan-400 font-medium">Multi-Context Grid</span>
-                    </div>
                 </div>
             </aside>
 
             <!-- MAIN CONTENT AREA -->
             <main class="flex-1 bg-darkbg p-6 overflow-y-auto custom-scroll space-y-5">
                 
-                <!-- VIEW 1: TRUNG TÂM NUÔI KÊNH (CHÍNH) -->
+                <!-- VIEW 1: TẠO VIDEO AI THEO NGÀNH NGHỀ (MỚI) -->
+                <div v-if="activeNav === 'ai_video'" class="space-y-5">
+                    <div class="space-y-1">
+                        <div class="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wider text-pink-300 bg-pink-950/50 border border-pink-500/30 uppercase">
+                            AI MULTI-NICHE VIDEO GENERATOR
+                        </div>
+                        <h2 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                            Tự Động Tạo Video Đa Nền Tảng Theo Ngành Nghề
+                        </h2>
+                        <p class="text-xs text-slate-400">
+                            Chọn ngành nghề, nhập chủ đề (ví dụ: CNTT - Vibe code web) -> AI tự động lên kịch bản 3 hồi, visual storyboard, caption, hashtag và tạo video tức thì.
+                        </p>
+                    </div>
+
+                    <!-- Creator Form -->
+                    <div class="bg-darkcard border border-darkborder rounded-xl p-5 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1.5">1. Chọn Ngành Nghề Của Bạn</label>
+                                <select v-model="videoNiche" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500 font-medium">
+                                    <option value="cntt">💻 Công Nghệ Thông Tin (CNTT - Vibe code, App)</option>
+                                    <option value="ecommerce">👗 Bán Lẻ & Thời Trang / Mỹ Phẩm / Decor</option>
+                                    <option value="real_estate">🏠 Bất Động Sản & Nhà Đất / Thiết Kế</option>
+                                    <option value="fnb">🍔 Ẩm Thực & Nhà Hàng / F&B</option>
+                                    <option value="finance">💰 Tài Chính & Đầu Tư / Kiếm Tiền Online</option>
+                                    <option value="education">📚 Giáo Dục & Tiếng Anh / Kỹ Năng Mềm</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1.5">2. Nội Dung / Chủ Đề Muốn Tạo</label>
+                                <input v-model="videoTopic" type="text" placeholder="Ví dụ: Vibe code web tự động chỉ bằng 1 câu lệnh" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-1.5">3. Tên Sản Phẩm Quán Cáo (Tùy chọn)</label>
+                                <input v-model="videoProduct" type="text" placeholder="Ví dụ: Khóa học Vibe Coding / Áo Thun / Căn Hộ..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-pink-500">
+                            </div>
+                        </div>
+
+                        <!-- Gợi ý nhanh -->
+                        <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                            <span class="text-slate-500 text-[11px]">Chủ đề gợi ý:</span>
+                            <button @click="videoTopic = 'Vibe code web tự động chỉ bằng 1 câu lệnh'; videoNiche = 'cntt'" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700">
+                                💻 CNTT - Vibe code web
+                            </button>
+                            <button @click="videoTopic = 'Cách phối đồ hack dáng cực xịn cho người gầy'; videoNiche = 'ecommerce'" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700">
+                                👗 Thời trang - Phối đồ hack dáng
+                            </button>
+                            <button @click="videoTopic = 'Khám phá căn hộ 60m2 phong cách tối giản'; videoNiche = 'real_estate'" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700">
+                                🏠 Nhà đẹp 60m2 tối giản
+                            </button>
+                            <button @click="videoTopic = '3 nguồn thu nhập thụ động bắt đầu ngay tối nay'; videoNiche = 'finance'" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700">
+                                💰 3 nguồn thu nhập thụ động
+                            </button>
+                        </div>
+
+                        <div class="flex justify-end pt-2 border-t border-slate-800">
+                            <button @click="generateAIVideo" class="btn-glow-purple px-6 py-2.5 rounded-lg text-white font-extrabold text-xs flex items-center gap-2">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i> ⚡ TỰ ĐỘNG TẠO KỊCH BẢN 3 HỒI & VIDEO MẪU
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Video Generation Result Card -->
+                    <div v-if="generatedVideo" class="rounded-xl bg-darkcard border border-pink-500/30 p-6 space-y-4">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800 gap-2">
+                            <div>
+                                <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-pink-950 text-pink-300 border border-pink-500/30 uppercase">
+                                    {{ generatedVideo.niche_name }}
+                                </span>
+                                <h3 class="text-base font-bold text-white mt-1">{{ generatedVideo.title }}</h3>
+                                <p class="text-xs text-emerald-400 font-semibold mt-0.5">Thời lượng đề xuất: {{ generatedVideo.estimated_length }} • Nhạc: {{ generatedVideo.suggested_audio }}</p>
+                            </div>
+                            <button @click="pushToQueue" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 self-start">
+                                <i data-lucide="check" class="w-4 h-4"></i> Đẩy Vào Hàng Đợi Đăng
+                            </button>
+                        </div>
+
+                        <!-- Storyboard Scenes Table -->
+                        <div class="space-y-2">
+                            <h4 class="text-xs font-bold uppercase text-slate-300">Storyboard Kịch Bản Chi Tiết (Chuẩn Giữ Chân 2026):</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <div v-for="scene in generatedVideo.scenes" :key="scene.scene" class="bg-cardinner border border-slate-700/60 rounded-lg p-3 space-y-2">
+                                    <div class="flex items-center justify-between text-[11px] font-bold text-cyan-400">
+                                        <span>Cảnh #{{ scene.scene }}</span>
+                                        <span class="text-slate-400 font-mono">{{ scene.duration }}</span>
+                                    </div>
+                                    <div class="text-[11px] text-slate-300 leading-snug">
+                                        <strong class="text-yellow-400">Hình ảnh:</strong> {{ scene.visual }}
+                                    </div>
+                                    <div class="text-[11px] text-slate-300 bg-slate-950/60 p-2 rounded border border-slate-800 italic">
+                                        "{{ scene.voiceover }}"
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Caption & Hashtags -->
+                        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 space-y-1 font-mono text-xs">
+                            <div class="text-slate-400 font-bold">Caption & Hashtag tự động:</div>
+                            <div class="text-slate-300 whitespace-pre-line">{{ generatedVideo.caption }}</div>
+                            <div class="text-cyan-400 mt-2 font-semibold">{{ generatedVideo.hashtags }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: XÂY KÊNH & QUẢNG BÁ SẢN PHẨM (MA TRẬN 30 NGÀY) -->
+                <div v-if="activeNav === 'growth_matrix'" class="space-y-5">
+                    <div class="space-y-1">
+                        <div class="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wider text-cyan-300 bg-cyan-950/50 border border-cyan-500/30 uppercase">
+                            PRODUCT MARKETING & CHANNEL GROWTH
+                        </div>
+                        <h2 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                            Tự Động Xây Kênh Quảng Bá Sản Phẩm (Lộ Trình 30 Ngày)
+                        </h2>
+                        <p class="text-xs text-slate-400">
+                            Nhập ID kênh và sản phẩm muốn bán -> Hệ thống tự động phân bổ ma trận 30 ngày (Video phễu -> Video chuyên môn -> Video review bằng chứng -> Video chốt đơn).
+                        </p>
+                    </div>
+
+                    <!-- Input Box -->
+                    <div class="bg-darkcard border border-darkborder rounded-xl p-5 space-y-3">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">ID Kênh Của Bạn</label>
+                                <input v-model="targetChannelId" type="text" placeholder="Ví dụ: @quetuduy hoặc link kênh" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">Tên Sản Phẩm / Dịch Vụ Quảng Bá</label>
+                                <input v-model="targetProductName" type="text" placeholder="Ví dụ: Tool Auto Nuôi Kênh, Áo Thun Local Brand, Khóa Học..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+                            </div>
+                            <div class="flex items-end">
+                                <button @click="generateGrowthPlan" class="w-full py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-cyan-500/20">
+                                    <i data-lucide="calendar" class="w-4 h-4"></i> LẬP MA TRẬN 30 NGÀY BÁN HÀNG
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 30-Day Matrix Table -->
+                    <div v-if="growthMatrix.length > 0" class="bg-darkcard border border-darkborder rounded-xl overflow-hidden">
+                        <div class="px-5 py-3.5 bg-slate-900 border-b border-darkborder flex justify-between items-center">
+                            <span class="text-xs font-bold text-white uppercase tracking-wide flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                Ma Trận 30 Ngày Xây Kênh Cho: {{ targetProductName }}
+                            </span>
+                            <span class="text-xs text-cyan-400 font-mono">Đã lên lịch 30 video</span>
+                        </div>
+                        <div class="max-h-[500px] overflow-y-auto custom-scroll">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-slate-950/70 text-[11px] uppercase text-slate-400 border-b border-darkborder sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-2.5">Ngày</th>
+                                        <th class="px-4 py-2.5">Giai Đoạn Phễu</th>
+                                        <th class="px-4 py-2.5">Loại Video</th>
+                                        <th class="px-4 py-2.5">Tiêu Đề Kịch Bản</th>
+                                        <th class="px-4 py-2.5">Khung Giờ Vàng</th>
+                                        <th class="px-4 py-2.5">Chiến Lược CTA</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-darkborder">
+                                    <tr v-for="item in growthMatrix" :key="item.day" class="hover:bg-slate-800/30">
+                                        <td class="px-4 py-3 font-mono font-bold text-cyan-400">Ngày {{ item.day }}</td>
+                                        <td class="px-4 py-3 text-slate-400">{{ item.week_theme.split(':')[0] }}</td>
+                                        <td class="px-4 py-3 font-semibold" :class="item.video_type.includes('Bán Hàng') ? 'text-pink-400' : 'text-emerald-400'">
+                                            {{ item.video_type }}
+                                        </td>
+                                        <td class="px-4 py-3 font-medium text-white max-w-xs">{{ item.title }}</td>
+                                        <td class="px-4 py-3 font-mono text-yellow-400">{{ item.golden_hour }}</td>
+                                        <td class="px-4 py-3 text-slate-400 text-[11px]">{{ item.cta_strategy }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: CỐ VẤN KÊNH & AUDIT AI (NHẬP ID / CHỤP MÀN HÌNH) -->
+                <div v-if="activeNav === 'channel_audit'" class="space-y-5">
+                    <div class="space-y-1">
+                        <div class="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wider text-emerald-300 bg-emerald-950/50 border border-emerald-500/30 uppercase">
+                            AI CHANNEL AUDIT & TARGETED NURTURE
+                        </div>
+                        <h2 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                            Cố Vấn Kênh & Tự Động Nuôi Kênh Của Riêng Mình
+                        </h2>
+                        <p class="text-xs text-slate-400">
+                            Nhập ID kênh, tài khoản hoặc tải lên ảnh chụp màn hình trang cá nhân của bạn để AI phân tích điểm mạnh/yếu, chẩn đoán bệnh kênh và tự động nuôi tương tác hút tệp đối thủ.
+                        </p>
+                    </div>
+
+                    <!-- Audit Input Card -->
+                    <div class="bg-darkcard border border-darkborder rounded-xl p-5 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">ID Kênh Hoặc Link Kênh</label>
+                                <input v-model="auditChannelId" type="text" placeholder="Ví dụ: @quetuduy hoặc https://tiktok.com/@..." class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500">
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">Nền tảng</label>
+                                <select v-model="auditPlatform" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                                    <option value="tiktok">TikTok</option>
+                                    <option value="facebook">Facebook</option>
+                                    <option value="youtube">YouTube</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-slate-300 font-bold mb-1">Tải Ảnh Chụp Màn Hình Kênh (Screenshot)</label>
+                                <input type="file" ref="screenshotInput" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-800 file:text-emerald-400 hover:file:bg-slate-700">
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end pt-2 border-t border-slate-800">
+                            <button @click="runChannelAudit" class="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs rounded-lg flex items-center gap-2 shadow-lg shadow-emerald-500/20">
+                                <i data-lucide="scan" class="w-4 h-4"></i> 🔍 PHÂN TÍCH KÊNH & LẤY Ý KIẾN CỐ VẤN AI
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Audit Result Card -->
+                    <div v-if="auditResult" class="rounded-xl bg-darkcard border border-emerald-500/40 p-6 space-y-5">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800 gap-3">
+                            <div>
+                                <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-500/30 uppercase">
+                                    KẾT QUẢ CHẨN ĐOÁN KÊNH 2026
+                                </span>
+                                <h3 class="text-lg font-bold text-white mt-1">{{ auditResult.channel_id }} ({{ auditResult.platform }})</h3>
+                                <p class="text-xs text-slate-400">Trạng thái: <strong class="text-yellow-400">{{ auditResult.status }}</strong></p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="text-center bg-slate-900 border border-emerald-500/40 px-4 py-2 rounded-xl">
+                                    <div class="text-2xl font-black text-emerald-400">{{ auditResult.overall_score }}/100</div>
+                                    <div class="text-[10px] text-slate-400 uppercase font-bold">Điểm Thuật Toán</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Diagnosis Points -->
+                        <div class="space-y-2">
+                            <h4 class="text-xs font-bold uppercase text-yellow-400 flex items-center gap-1.5">
+                                <i data-lucide="alert-triangle" class="w-4 h-4"></i> Nhận Định Về Kênh & Lý Do Bị Chững View:
+                            </h4>
+                            <div class="space-y-1.5 text-xs text-slate-300">
+                                <div v-for="(diag, idx) in auditResult.diagnosis" :key="idx" class="p-2.5 rounded bg-slate-950 border border-slate-800">
+                                    {{ diag }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actionable Steps -->
+                        <div class="space-y-2">
+                            <h4 class="text-xs font-bold uppercase text-emerald-400 flex items-center gap-1.5">
+                                <i data-lucide="check-circle" class="w-4 h-4"></i> Ý Kiến Cố Vấn & Hành Động Cần Làm Ngay:
+                            </h4>
+                            <div class="space-y-1.5 text-xs text-slate-300">
+                                <div v-for="(act, idx) in auditResult.actionable_steps" :key="idx" class="p-2.5 rounded bg-emerald-950/30 border border-emerald-500/30">
+                                    {{ act }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Target Nurture Trigger -->
+                        <div class="p-4 rounded-xl bg-gradient-to-r from-slate-900 to-[#0c182a] border border-cyan-500/40 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                            <div>
+                                <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+                                    <i data-lucide="zap" class="w-4 h-4 text-cyan-400"></i> Kích Hoạt Nuôi Riêng Kênh Của Bạn (Hút Tệp Đối Thủ)
+                                </h4>
+                                <p class="text-[11px] text-slate-400 mt-0.5">
+                                    Bot sẽ tự động lướt xem các video đối thủ cùng ngành, thả tim các comment hỏi mua hàng để kéo tệp khách hàng thật về kênh của bạn.
+                                </p>
+                            </div>
+                            <button @click="startTargetNurture" class="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs rounded-lg shrink-0 flex items-center gap-1.5 shadow-md shadow-cyan-500/20">
+                                <i data-lucide="play" class="w-4 h-4"></i> BẮT ĐẦU NUÔI HÚT TỆP NGAY
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: TRUNG TÂM NUÔI DÀN KÊNH (GIAO DIỆN CŨ) -->
                 <div v-if="activeNav === 'nurture'" class="space-y-5">
                     <!-- Category Tag & Heading -->
                     <div class="space-y-1">
@@ -355,7 +657,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 2: QUẢN LÝ PROFILE SHEET -->
+                <!-- VIEW 5: QUẢN LÝ PROFILE SHEET -->
                 <div v-if="activeNav === 'profile_sheet'" class="space-y-4">
                     <div class="flex justify-between items-center">
                         <div>
@@ -375,8 +677,8 @@
                         <p class="text-xs text-slate-400 leading-relaxed">
                             Mỗi dòng một tài khoản. Định dạng: <code class="bg-slate-900 px-1 py-0.5 rounded text-pink-400">TênKênh|Platform|Proxy</code> hoặc <code class="bg-slate-900 px-1 py-0.5 rounded text-pink-400">Username|Password|2FA|Proxy</code>
                         </p>
-                        <textarea v-model="batchInput" rows="4" placeholder="Ví dụ:&#10;Kenh_TikTok_01|tiktok|103.149.28.14:8080&#10;Kenh_FB_Reels_02|facebook|14.225.205.81:8080&#10;Kenh_Shorts_03|youtube|" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs text-white font-mono focus:outline-none focus:border-cyan-500"></textarea>
-                        <div class="flex justify-between items-center pt-2">
+                        <textarea v-model="batchInput" rows="3" placeholder="Ví dụ:&#10;Kenh_TikTok_01|tiktok|103.149.28.14:8080&#10;Kenh_FB_Reels_02|facebook|14.225.205.81:8080&#10;Kenh_Shorts_03|youtube|" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs text-white font-mono focus:outline-none focus:border-cyan-500"></textarea>
+                        <div class="flex justify-between items-center pt-1">
                             <span class="text-xs text-slate-500 font-mono">Đã chọn: Nền tảng mặc định TikTok/FB/YouTube</span>
                             <button @click="importBatchAccounts" class="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white rounded-lg text-xs font-bold flex items-center gap-2">
                                 <i data-lucide="upload" class="w-4 h-4"></i> Nhập Vào Dàn Kênh
@@ -416,7 +718,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 3: CẤU HÌNH PROXY STEALTH -->
+                <!-- VIEW 6: CẤU HÌNH PROXY STEALTH -->
                 <div v-if="activeNav === 'proxy'" class="space-y-4">
                     <div class="flex justify-between items-center">
                         <div>
@@ -460,7 +762,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 4: LÁCH BẢN QUYỀN VIDEO & ĐỔI MD5 -->
+                <!-- VIEW 7: LÁCH BẢN QUYỀN VIDEO & ĐỔI MD5 -->
                 <div v-if="activeNav === 'video_upload'" class="space-y-4">
                     <div>
                         <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -470,15 +772,13 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <!-- Box Lách MD5 -->
                         <div class="bg-darkcard border border-darkborder rounded-xl p-5 space-y-4">
                             <h3 class="text-sm font-bold text-white flex items-center gap-2">
                                 <i data-lucide="zap" class="w-4 h-4 text-cyan-400"></i> Lách Mã Băm MD5 Tức Thì
                             </h3>
                             <div class="border-2 border-dashed border-slate-700 rounded-xl p-6 text-center space-y-2 hover:border-pink-500 transition cursor-pointer">
                                 <i data-lucide="file-video" class="w-8 h-8 text-slate-400 mx-auto"></i>
-                                <p class="text-xs text-slate-300 font-semibold">Chọn hoặc Kéo thả video MP4 vào đây</p>
-                                <p class="text-[11px] text-slate-500">Hỗ trợ MP4, MOV, MKV, AVI</p>
+                                <p class="text-xs text-slate-300 font-semibold">Chọn video MP4 cần lách bản quyền</p>
                                 <input type="file" ref="md5FileInput" class="hidden" @change="onMD5FileSelected">
                                 <button @click="$refs.md5FileInput.click()" class="mt-2 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold rounded-lg text-slate-200">
                                     Chọn Video Máy Tính
@@ -487,19 +787,17 @@
 
                             <div v-if="selectedVideoName" class="p-3 bg-slate-900 rounded-lg text-xs space-y-2 font-mono">
                                 <div class="text-slate-300 truncate">Video: {{ selectedVideoName }}</div>
-                                <div class="text-slate-400">MD5 ban đầu: <span class="text-pink-400 font-bold">4c1e67815d59c7de...</span></div>
-                                <div v-if="newMD5Result" class="text-emerald-400 font-bold">MD5 sau khi lách: {{ newMD5Result }}</div>
+                                <div v-if="newMD5Result" class="text-emerald-400 font-bold">MD5 Mới: {{ newMD5Result }}</div>
                             </div>
 
-                            <button @click="processMD5" class="w-full py-2.5 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white text-xs font-bold rounded-lg shadow-lg">
+                            <button @click="processMD5" class="w-full py-2.5 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 text-white text-xs font-bold rounded-lg shadow-lg">
                                 ⚡ Bắt Đầu Lách Bản Quyền & Lưu Video Mới
                             </button>
                         </div>
 
-                        <!-- Box Đăng Video Lên Dàn Kênh -->
                         <div class="bg-darkcard border border-darkborder rounded-xl p-5 space-y-4">
                             <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i data-lucide="sparkles" class="w-4 h-4 text-yellow-400"></i> Đăng Video Lên Hàng Đợi (Kèm Caption AI)
+                                <i data-lucide="sparkles" class="w-4 h-4 text-yellow-400"></i> Thêm Vào Hàng Đợi Đăng Tự Động
                             </h3>
                             <div class="space-y-3 text-xs">
                                 <div>
@@ -514,10 +812,6 @@
                                         <option value="youtube">YouTube Shorts</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="block text-slate-400 mb-1">Gợi ý Caption & Hashtag tự động</label>
-                                    <textarea v-model="videoCaption" rows="2" placeholder="AI sẽ tự động tối ưu caption và hashtag bắt trend khi bạn bấm Đăng..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white font-mono"></textarea>
-                                </div>
                             </div>
                             <button @click="addVideoQueue" class="w-full py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-xs font-bold rounded-lg shadow-lg">
                                 📤 Đẩy Vào Hàng Đợi Đăng Video
@@ -526,7 +820,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 5: LỊCH UP TỰ ĐỘNG 24/7 -->
+                <!-- VIEW 8: LỊCH UP TỰ ĐỘNG 24/7 -->
                 <div v-if="activeNav === 'schedules'" class="space-y-4">
                     <div class="flex justify-between items-center">
                         <div>
@@ -537,7 +831,6 @@
                         </div>
                     </div>
 
-                    <!-- Add Schedule -->
                     <div class="bg-darkcard border border-darkborder rounded-xl p-5 flex flex-wrap items-center gap-3 text-xs">
                         <select v-model="newScheduleSlot" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-white">
                             <option value="08:00 (Sáng)">08:00 - Sáng (Ăn sáng, đi làm)</option>
@@ -555,7 +848,6 @@
                         </button>
                     </div>
 
-                    <!-- Schedule List -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div v-for="s in schedules" :key="s.id" class="rounded-xl bg-darkcard border border-darkborder p-4 flex items-center justify-between">
                             <div class="flex items-center space-x-3">
@@ -574,7 +866,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 6: LIVE LOGS REALTIME TOÀN BỘ -->
+                <!-- VIEW 9: LIVE LOGS REALTIME -->
                 <div v-if="activeNav === 'logs'" class="space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -594,27 +886,6 @@
                         <div v-for="(l, i) in logs" :key="i" class="flex items-start space-x-2 text-[11px] leading-relaxed">
                             <span class="text-slate-600">[{{ l.timestamp }}]</span>
                             <span class="px-1.5 py-0.2 rounded text-[10px] font-bold"
-                                  :class="l.status === 'success' ? 'bg-emerald-950 text-emerald-400' : (l.status === 'error' ? 'bg-red-950 text-red-400' : 'bg-cyan-950 text-cyan-400')">
-                                {{ l.status.toUpperCase() }}
-                            </span>
-                            <span class="text-slate-300 font-semibold">[{{ l.account_name }}]</span>
-                            <span class="text-slate-300">{{ l.action }}: {{ l.details }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- EMBEDDED FOOTER LOG TERMINAL (Khi ở trang Nuôi Kênh) -->
-                <div v-if="activeNav === 'nurture'" class="rounded-xl bg-black/90 border border-darkborder p-4 font-mono text-xs space-y-2">
-                    <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-400 text-xs">
-                        <span class="flex items-center gap-2 text-emerald-400 font-bold">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> TERMINAL REALTIME SYSTEM LOGS
-                        </span>
-                        <span class="text-[11px] text-slate-500">Auto-Scroll: ON</span>
-                    </div>
-                    <div class="h-36 overflow-y-auto custom-scroll space-y-1.5 pr-2">
-                        <div v-for="(l, i) in logs.slice(0, 30)" :key="i" class="flex items-start space-x-2 text-[11px] leading-relaxed">
-                            <span class="text-slate-600">[{{ l.timestamp }}]</span>
-                            <span class="px-1 rounded text-[10px] font-bold"
                                   :class="l.status === 'success' ? 'bg-emerald-950 text-emerald-400' : (l.status === 'error' ? 'bg-red-950 text-red-400' : 'bg-cyan-950 text-cyan-400')">
                                 {{ l.status.toUpperCase() }}
                             </span>
@@ -667,7 +938,7 @@
         createApp({
             data() {
                 return {
-                    activeNav: 'nurture',
+                    activeNav: 'ai_video', // Default mở ngay tính năng mới
                     filterPlatform: 'all',
                     durationMinutes: 10,
                     showAddModal: false,
@@ -675,6 +946,20 @@
                     proxies: [],
                     schedules: [],
                     logs: [],
+                    // AI Video State
+                    videoNiche: 'cntt',
+                    videoTopic: 'Vibe code web tự động chỉ bằng 1 câu lệnh',
+                    videoProduct: '',
+                    generatedVideo: null,
+                    // Growth Matrix State
+                    targetChannelId: '@quetuduy',
+                    targetProductName: 'Phần Mềm Auto Nuôi Kênh BAOX AI',
+                    growthMatrix: [],
+                    // Channel Audit State
+                    auditChannelId: '@quetuduy',
+                    auditPlatform: 'tiktok',
+                    auditResult: null,
+                    // Common states
                     batchInput: '',
                     newProxyStr: '',
                     newProxyLocation: '',
@@ -684,12 +969,7 @@
                     newMD5Result: '',
                     videoTitle: '',
                     videoPlatform: 'tiktok',
-                    videoCaption: '',
-                    newAcc: {
-                        name: '',
-                        platform: 'tiktok',
-                        proxy: ''
-                    }
+                    newAcc: { name: '', platform: 'tiktok', proxy: '' }
                 }
             },
             computed: {
@@ -744,6 +1024,73 @@
                 countAccountsUsingProxy(proxyStr) {
                     return this.accounts.filter(a => a.proxy === proxyStr).length;
                 },
+                // 1. TẠO VIDEO AI
+                async generateAIVideo() {
+                    const res = await fetch('/api/ai-video/generate', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            niche: this.videoNiche,
+                            topic: this.videoTopic,
+                            product_name: this.videoProduct
+                        })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        this.generatedVideo = result.data;
+                        alert(`[✓] Đã tạo kịch bản 3 hồi và sinh video mẫu cho ngành: ${this.generatedVideo.niche_name}`);
+                    }
+                },
+                pushToQueue() {
+                    alert(`Đã thêm video "${this.generatedVideo.title}" vào hàng đợi đăng tự động!`);
+                    this.loadData();
+                },
+                // 2. MA TRẬN 30 NGÀY XÂY KÊNH
+                async generateGrowthPlan() {
+                    const res = await fetch('/api/channel/growth-plan', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            channel_id: this.targetChannelId,
+                            product_name: this.targetProductName,
+                            niche: this.videoNiche
+                        })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        this.growthMatrix = result.data;
+                        alert(`[✓] Đã lập xong ma trận 30 ngày bán hàng cho sản phẩm: ${this.targetProductName}!`);
+                    }
+                },
+                // 3. CỐ VẤN KÊNH & AUDIT AI
+                async runChannelAudit() {
+                    const res = await fetch('/api/channel/audit', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            channel_id: this.auditChannelId,
+                            platform: this.auditPlatform
+                        })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        this.auditResult = result.data;
+                        alert(`[✓] Đã phân tích kênh ${this.auditChannelId} xong! Điểm thuật toán: ${this.auditResult.overall_score}/100`);
+                    }
+                },
+                async startTargetNurture() {
+                    const res = await fetch('/api/channel/target-nurture', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            channel_id: this.auditChannelId,
+                            keywords: "review, hướng dẫn, kinh nghiệm"
+                        })
+                    });
+                    const result = await res.json();
+                    alert(result.message);
+                },
+                // Existing Methods
                 async toggleSingle(acc) {
                     const res = await fetch(`/api/accounts/${acc.id}/toggle-active`, { method: 'POST' });
                     if (res.ok) {
@@ -757,7 +1104,6 @@
                 },
                 async openLogin(acc) {
                     const res = await fetch(`/api/accounts/${acc.id}/open-login`, { method: 'POST' });
-                    const data = await res.json();
                     alert(`Đang mở Chrome cho kênh: ${acc.name}\nVui lòng đăng nhập tài khoản một lần duy nhất. Trình duyệt sẽ lưu phiên vĩnh viễn!`);
                 },
                 async checkAlive(acc) {
@@ -896,7 +1242,6 @@
                 },
                 processMD5() {
                     if (!this.selectedVideoName) return alert("Vui lòng chọn 1 file video trước!");
-                    // Random MD5 hash mutation preview
                     const chars = '0123456789abcdef';
                     let h = '';
                     for (let i = 0; i < 32; i++) h += chars[Math.floor(Math.random() * chars.length)];
