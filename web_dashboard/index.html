@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NGỌC KHÁNH MEDIA - Automation Tools PRO MAX 2026</title>
+    <link rel="icon" href="data:,">
     <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -114,7 +115,7 @@
                 </div>
 
                 <div v-else>
-                    <button @click="showAuthModal = true" class="px-3.5 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md shadow-cyan-500/20">
+                    <button @click="openAuthModal()" class="px-3.5 py-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-md shadow-cyan-500/20">
                         <i data-lucide="user" class="w-3.5 h-3.5"></i> Đăng Nhập / Đăng Ký
                     </button>
                 </div>
@@ -752,7 +753,7 @@
                                 <span class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
                                     ✔ Sẵn sàng ({{ enabledAccountsCount }}/{{ accounts.length }} kênh đã bật)
                                 </span>
-                                <button v-if="currentUser && currentUser.role === 'admin'" @click="showAddModal = true" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 flex items-center gap-1">
+                                <button v-if="currentUser && currentUser.role === 'admin'" @click="openAddModal()" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 flex items-center gap-1">
                                     <i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm Kênh
                                 </button>
                             </div>
@@ -1344,6 +1345,18 @@
                 lucide.createIcons();
             },
             methods: {
+                openAddModal() {
+                    this.showAuthModal = false;
+                    this.showAddModal = true;
+                },
+                openAuthModal() {
+                    this.showAddModal = false;
+                    this.showAuthModal = true;
+                },
+                closeModals() {
+                    this.showAddModal = false;
+                    this.showAuthModal = false;
+                },
                 async loadData() {
                     try {
                         const [accRes, logRes, proxRes, schedRes] = await Promise.all([

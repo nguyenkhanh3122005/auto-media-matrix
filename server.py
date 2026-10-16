@@ -9,7 +9,7 @@ from pathlib import Path
 from fastapi import FastAPI, WebSocket, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel
 import edge_tts
 
@@ -683,11 +683,17 @@ async def channel_target_nurture(payload: dict):
         "message": f"Đã kết nối thành công dàn kênh vệ tinh đến mục tiêu {channel}!"
     }
 
+# Favicon - trả về 204 để browser không báo lỗi 404
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return Response(status_code=204)
+
 # Phục vụ giao diện Web Dashboard tại root URL
 @app.get("/")
 async def serve_index():
     index_path = WEB_DIR / "index.html"
     return FileResponse(index_path)
+
 
 if __name__ == "__main__":
     import uvicorn
