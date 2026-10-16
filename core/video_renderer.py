@@ -67,38 +67,56 @@ class VideoRenderer:
         # 2. Hiệu ứng sóng âm waveform / nhấp nháy
         # 3. Text giật tít Hook & Title
         # 4. Mix nhạc nền BGM ngầm ở 15% âm lượng
-        cmd = [
-            self.ffmpeg_exe, "-y",
-            # Input 0: Nền màu động chuyển động gradient
-            "-f", "lavfi", "-i", f"color=c=0x0c101c:s={width}x{height}:r=25",
-            # Input 1: Audio giọng đọc AI tiếng Việt
-            "-i", voice_audio_path,
-            # Input 2: Nhạc nền BGM tổng hợp nhẹ nhàng (Lo-fi pulse)
-            "-f", "lavfi", "-i", "sine=frequency=220:sample_rate=24000",
-            "-filter_complex",
-            (
-                # Video processing: Vẽ khung branding, title và subtitle
-                f"[0:v]drawbox=x=0:y=0:w={width}:h=120:color=0x1e293b@0.8:t=fill,"
-                f"drawtext=text='⚡ NGOC KHANH MEDIA | {clean_niche}':fontcolor=0x00f0ff:fontsize=24:x=(w-text_w)/2:y=45,"
-                f"drawbox=x=40:y=180:w={width-80}:h=240:color=0x0284c7@0.2:t=fill,"
-                f"drawtext=text='{clean_topic[:36]}':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=240,"
-                f"drawtext=text='{clean_topic[36:72]}':fontcolor=0xffd700:fontsize=32:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=40:y={height-360}:w={width-80}:h=220:color=0x000000@0.7:t=fill,"
-                f"drawtext=text='{clean_hook[:42]}':fontcolor=0xa855f7:fontsize=28:x=(w-text_w)/2:y={height-300},"
-                f"drawtext=text='👉 Xem ngay & Follow kenh de cap nhat':fontcolor=white:fontsize=22:x=(w-text_w)/2:y={height-220}[vout];"
-                # Audio processing: Voice ở 100%, BGM ở 12%, hòa trộn
-                f"[1:a]volume=1.0[v_voice];[2:a]volume=0.12[v_bgm];[v_voice][v_bgm]amix=inputs=2:duration=first[aout]"
-            ),
-            "-map", "[vout]",
-            "-map", "[aout]",
-            "-c:v", "libx264",
-            "-preset", "veryfast",
-            "-pix_fmt", "yuv420p",
-            "-c:a", "aac",
-            "-b:a", "128k",
-            "-shortest",
-            output_path
-        ]
+        base_dir = Path(__file__).resolve().parent.parent
+        code_video = str(base_dir / "assets" / "code_typing.mp4")
+        app_img = str(base_dir / "assets" / "app_dashboard.png")
+
+        if os.path.exists(code_video) and os.path.exists(app_img):
+            cmd = [
+                self.ffmpeg_exe, "-y",
+                "-stream_loop", "-1", "-i", code_video,
+                "-loop", "1", "-i", app_img,
+                "-i", voice_audio_path,
+                "-filter_complex", (
+                    f"[0:v]trim=duration=5,scale={width}:{height}:force_original_aspect_ratio=increase,crop={width}:{height},setpts=PTS-STARTPTS[v0];"
+                    f"[1:v]scale={width}:{height}:force_original_aspect_ratio=increase,crop={width}:{height},zoompan=z='min(zoom+0.0015,1.15)':d=900:s={width}x{height}:fps=25,setpts=PTS-STARTPTS[v1];"
+                    f"[v0][v1]concat=n=2:v=1:a=0[v_base];"
+                    f"[v_base]drawbox=x=0:y=0:w={width}:h=120:color=0x0f172a@0.9:t=fill,"
+                    f"drawtext=text='⚡ NGOC KHANH MEDIA | {clean_niche}':fontcolor=0x00f0ff:fontsize=22:x=(w-text_w)/2:y=30,"
+                    f"drawtext=text='{clean_topic[:36]}':fontcolor=white:fontsize=32:x=(w-text_w)/2:y=75[vout]"
+                ),
+                "-map", "[vout]",
+                "-map", "2:a",
+                "-c:v", "libx264",
+                "-preset", "veryfast",
+                "-pix_fmt", "yuv420p",
+                "-c:a", "aac",
+                "-b:a", "192k",
+                "-shortest",
+                output_path
+            ]
+        else:
+            cmd = [
+                self.ffmpeg_exe, "-y",
+                "-f", "lavfi", "-i", f"color=c=0x0c101c:s={width}x{height}:r=25",
+                "-i", voice_audio_path,
+                "-filter_complex",
+                (
+                    f"[0:v]drawbox=x=0:y=0:w={width}:h=120:color=0x1e293b@0.8:t=fill,"
+                    f"drawtext=text='⚡ NGOC KHANH MEDIA | {clean_niche}':fontcolor=0x00f0ff:fontsize=24:x=(w-text_w)/2:y=45,"
+                    f"drawbox=x=40:y=180:w={width-80}:h=240:color=0x0284c7@0.2:t=fill,"
+                    f"drawtext=text='{clean_topic[:36]}':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=240[vout]"
+                ),
+                "-map", "[vout]",
+                "-map", "1:a",
+                "-c:v", "libx264",
+                "-preset", "veryfast",
+                "-pix_fmt", "yuv420p",
+                "-c:a", "aac",
+                "-b:a", "128k",
+                "-shortest",
+                output_path
+            ]
 
         try:
             process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=45)

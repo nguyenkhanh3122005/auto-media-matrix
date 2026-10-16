@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: 'Consolas', 'Fira Code', 'Courier New', monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .window {
+    width: 90%;
+    max-width: 650px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7), 0 0 30px rgba(0, 240, 255, 0.2);
+    overflow: hidden;
+  }
+  .titlebar {
+    background: #0d1117;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #30363d;
+  }
+  .dots { display: flex; gap: 8px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .red { background: #ff5f56; }
+  .yellow { background: #ffbd2e; }
+  .green { background: #27c93f; }
+  .title { margin-left: 16px; font-size: 13px; color: #8b949e; }
+  .editor {
+    padding: 24px;
+    font-size: 18px;
+    line-height: 1.6;
+    min-height: 380px;
+  }
+  .line { display: flex; }
+  .num { width: 35px; color: #484f58; user-select: none; }
+  .code { flex: 1; }
+  .kw { color: #ff7b72; font-weight: bold; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .comment { color: #8b949e; font-style: italic; }
+  .num-val { color: #79c0ff; }
+  .cursor {
+    display: inline-block;
+    width: 9px;
+    height: 20px;
+    background: #58a6ff;
+    vertical-align: middle;
+    animation: blink 0.8s infinite;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+<div class="window">
+  <div class="titlebar">
+    <div class="dots">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+    </div>
+    <div class="title">⚡ ngoc_khanh_media_vibe_code.py - Visual Studio Code</div>
+  </div>
+  <div class="editor" id="editor"></div>
+</div>
+<script>
+const lines = [
+  '<span class="comment"># ⚡ NGỌC KHÁNH MEDIA - AI MATRIX AUTOMATION 2026</span>',
+  '<span class="kw">from</span> matrix_engine <span class="kw">import</span> AutoMediaCore, AIVideoPipeline',
+  '',
+  '<span class="comment"># 1. Khởi tạo ma trận tự động nuôi kênh & video</span>',
+  'matrix = <span class="fn">AutoMediaCore</span>(niche=<span class="str">"CNTT"</span>, platform=<span class="str">"TikTok"</span>)',
+  '',
+  '<span class="comment"># 2. Vibe code tự động kịch bản 3 hồi & giọng đọc AI</span>',
+  'video = matrix.<span class="fn">generate_viral_video</span>(',
+  '    topic=<span class="str">"Vibe Code Web Tự Động Trong 30 Giây"</span>,',
+  '    voice=<span class="str">"vi-VN-HoaiMyNeural"</span>,',
+  '    bgm_volume=<span class="num-val">0.15</span>',
+  ')',
+  '',
+  '<span class="comment"># 3. Kích hoạt Playwright Stealth & xuất bản tự động</span>',
+  'matrix.<span class="fn">auto_publish</span>(video, proxy=<span class="str">"103.149.28.14:8080"</span>)',
+  '<span class="fn">print</span>(<span class="str">"✨ Xuất bản thành công! Video đã lên xu hướng!"</span>)'
+];
+
+const editor = document.getElementById('editor');
+let currentLine = 0;
+
+function showNextLine() {
+  if (currentLine < lines.length) {
+    const row = document.createElement('div');
+    row.className = 'line';
+    row.innerHTML = `<span class="num">${currentLine + 1}</span><span class="code">${lines[currentLine]}</span>`;
+    editor.appendChild(row);
+    currentLine++;
+    setTimeout(showNextLine, 280);
+  } else {
+    const cursorLine = document.createElement('div');
+    cursorLine.className = 'line';
+    cursorLine.innerHTML = `<span class="num">${currentLine + 1}</span><span class="code"><span class="cursor"></span></span>`;
+    editor.appendChild(cursorLine);
+  }
+}
+showNextLine();
+</script>
+</body>
+</html>

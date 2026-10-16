@@ -122,7 +122,71 @@ def spoof_video_md5(input_path: str, output_path: str) -> str:
             h.update(chunk)
     return h.hexdigest()
 
-# 2. BOT PLAYWRIGHT STEALTH TỰ ĐỘNG UPLOAD TIKTOK/META
+# 2. HÀM DỰNG VIDEO CHUYỂN CẢNH ĐỘNG 2 HỒI (CODE TYPING -> GIAO DIỆN PHẦN MỀM)
+def render_dynamic_video(audio_path: str, output_path: str, topic_title: str):
+    """
+    Dựng video dọc 9:16 chuyên nghiệp:
+    - Cảnh 1 (0 - 5s): Hiệu ứng màn hình viết code thực tế (assets/code_typing.mp4)
+    - Cảnh 2 (5s - hết): Màn hình phần mềm Ngọc Khánh Media có zoom nhẹ Ken Burns (assets/app_dashboard.png)
+    - Ghép giọng đọc AI (Hoài My/Nam Minh) + Tiêu đề nổi bật
+    """
+    code_video = str(BASE_DIR / "assets" / "code_typing.mp4")
+    app_img = str(BASE_DIR / "assets" / "app_dashboard.png")
+
+    clean_topic = topic_title.replace("'", "").replace('"', '').replace(":", " - ")[:36]
+
+    if os.path.exists(code_video) and os.path.exists(app_img):
+        ffmpeg_cmd = [
+            FFMPEG_EXE, "-y",
+            "-stream_loop", "-1", "-i", code_video,
+            "-loop", "1", "-i", app_img,
+            "-i", audio_path,
+            "-filter_complex", (
+                # Đoạn 1: Code typing 5 giây
+                "[0:v]trim=duration=5,scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,setpts=PTS-STARTPTS[v0];"
+                # Đoạn 2: Giao diện Ngọc Khánh Media có zoom nhẹ (ken burns)
+                "[1:v]scale=720:1280:force_original_aspect_ratio=increase,crop=720:1280,zoompan=z='min(zoom+0.0015,1.15)':d=900:s=720x1280:fps=25,setpts=PTS-STARTPTS[v1];"
+                # Nối 2 đoạn
+                "[v0][v1]concat=n=2:v=1:a=0[v_base];"
+                # Chèn thanh tiêu đề và logo nổi góc trên
+                f"[v_base]drawbox=y=100:color=0x0f172a@0.9:width=iw:height=150:t=fill,"
+                f"drawtext=text='⚡ NGOC KHANH MEDIA':fontcolor=0x00f0ff:fontsize=22:x=(w-text_w)/2:y=115,"
+                f"drawtext=text='{clean_topic}':fontcolor=white:fontsize=32:x=(w-text_w)/2:y=160[v_out]"
+            ),
+            "-map", "[v_out]",
+            "-map", "2:a",
+            "-c:v", "libx264",
+            "-preset", "veryfast",
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac",
+            "-b:a", "192k",
+            "-shortest",
+            output_path
+        ]
+    else:
+        # Fallback an toàn nếu chưa có assets
+        ffmpeg_cmd = [
+            FFMPEG_EXE, "-y",
+            "-f", "lavfi", "-i", "color=c=0x0a101f:s=720x1280:r=25",
+            "-i", audio_path,
+            "-filter_complex", (
+                f"[0:v]drawbox=y=100:color=0x0f172a@0.85:width=iw:height=140:t=fill,"
+                f"drawtext=text='⚡ NGOC KHANH MEDIA':fontcolor=0x00f0ff:fontsize=22:x=(w-text_w)/2:y=120,"
+                f"drawtext=text='{clean_topic}':fontcolor=white:fontsize=32:x=(w-text_w)/2:y=165[v_out]"
+            ),
+            "-map", "[v_out]",
+            "-map", "1:a",
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac",
+            "-shortest",
+            output_path
+        ]
+
+    subprocess.run(ffmpeg_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=40)
+
+# 3. BOT PLAYWRIGHT STEALTH TỰ ĐỘNG UPLOAD TIKTOK/META
 async def auto_upload_tiktok(video_path: str, title: str, proxy: str = None):
     await manager.broadcast("[BOT] Khởi tạo Playwright Stealth Engine...")
     try:
@@ -206,48 +270,13 @@ async def generate_video_api(req: VideoRequest, background_tasks: BackgroundTask
         with open(audio_path, "wb") as f:
             f.write(b"MOCK_TTS_STREAM_" + os.urandom(1024))
 
-    # 3.3. Dựng video hoàn chỉnh bằng FFmpeg (Ghép nền dọc + âm thanh)
-    await manager.broadcast("[FFMPEG] Đang tiến hành ghép âm thanh và render video dọc 9:16...")
+    # 3.3. Dựng video hoàn chỉnh bằng FFmpeg (Chuyển cảnh Code typing -> Giao diện phần mềm Ngọc Khánh Media)
+    await manager.broadcast("[FFMPEG] Đang dựng video chuyển cảnh động: Gõ code thực tế -> Giao diện Ngọc Khánh Media...")
     raw_video = str(STATIC_DIR / f"raw_{unique_id}.mp4")
     final_spoofed_video_name = f"final_{unique_id}.mp4"
     final_spoofed_video = str(STATIC_DIR / final_spoofed_video_name)
 
-    # Lệnh render FFmpeg video dọc 9:16 có nền cyberpunk + text + voice
-    clean_topic = req.topic.replace("'", "").replace('"', '')[:32]
-    ffmpeg_cmd = [
-        FFMPEG_EXE, "-y",
-        "-f", "lavfi", "-i", "color=c=0x0a101f:s=720x1280:r=25",
-        "-i", audio_path,
-        "-filter_complex",
-        (
-            f"[0:v]drawbox=x=0:y=0:w=720:h=100:color=0x1e293b@0.8:t=fill,"
-            f"drawtext=text='⚡ NGOC KHANH MEDIA':fontcolor=0x00f0ff:fontsize=28:x=(w-text_w)/2:y=35,"
-            f"drawbox=x=30:y=180:w=660:h=220:color=0x0284c7@0.2:t=fill,"
-            f"drawtext=text='{clean_topic}':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=250[vout]"
-        ),
-        "-map", "[vout]",
-        "-map", "1:a",
-        "-c:v", "libx264",
-        "-preset", "ultrafast",
-        "-pix_fmt", "yuv420p",
-        "-c:a", "aac",
-        "-shortest",
-        raw_video
-    ]
-    try:
-        subprocess.run(ffmpeg_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True, timeout=30)
-    except Exception:
-        # Fallback đơn giản hơn nếu thiếu font
-        cmd_fb = [
-            FFMPEG_EXE, "-y",
-            "-f", "lavfi", "-i", "color=c=0x0a101f:s=720x1280:r=25",
-            "-i", audio_path,
-            "-c:v", "libx264",
-            "-c:a", "aac",
-            "-shortest",
-            raw_video
-        ]
-        subprocess.run(cmd_fb, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=25)
+    render_dynamic_video(audio_path, raw_video, req.topic)
 
     # 3.4. Đổi mã băm MD5 để lách kiểm duyệt Reup
     await manager.broadcast("[MD5] Đang tối ưu màu sắc & sinh mã Hash MD5 chống quét lặp...")

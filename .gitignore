@@ -18,6 +18,8 @@ storage/generated_videos/*
 !storage/generated_videos/.gitkeep
 storage/generated_audios/*
 !storage/generated_audios/.gitkeep
+static/*
+!static/.gitkeep
 *.db
 *.sqlite3
 
