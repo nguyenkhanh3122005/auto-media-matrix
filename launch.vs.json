@@ -1,0 +1,12 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "backend\\app.py",
+      "name": "⚡ Khởi Chạy Server BAOX AI Matrix (F5)",
+      "currentDir": "${workspaceRoot}"
+    }
+  ]
+}

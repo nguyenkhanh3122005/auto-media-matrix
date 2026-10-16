@@ -1,0 +1,11 @@
+# AutoVibe Media Automation Suite - Dependencies
+fastapi>=0.100.0
+uvicorn>=0.22.0
+playwright>=1.39.0
+requests>=2.31.0
+websockets>=11.0.3
+pydantic>=2.0.0
+python-multipart>=0.0.6
+jinja2>=3.1.2
+schedule>=1.2.0
+colorama>=0.4.6

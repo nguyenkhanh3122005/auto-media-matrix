@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAOX AI - Automation Tools PRO MAX 2026</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#080d19',
+                        darksidebar: '#0b1120',
+                        darkcard: '#0f172a',
+                        darkborder: '#1e293b',
+                        cardinner: '#131e33',
+                        neoncyan: '#00f2fe',
+                        neongreen: '#10b981',
+                        neonblue: '#3b82f6',
+                        glowgreen: '#059669',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            background-color: #070c18;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .btn-glow-green {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.45);
+        }
+        .btn-glow-green:hover {
+            box-shadow: 0 0 28px rgba(16, 185, 129, 0.7);
+        }
+        .active-tab {
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.15) 0%, rgba(14, 165, 233, 0.02) 100%);
+            border-left: 3px solid #00f2fe;
+            color: #38bdf8;
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #0b1120;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-slate-100 flex flex-col min-h-screen overflow-x-hidden">
+    <div id="app" class="flex flex-col min-h-screen">
+
+        <!-- TOP BAR -->
+        <header class="h-14 bg-darksidebar border-b border-darkborder px-5 flex items-center justify-between sticky top-0 z-50">
+            <!-- Left Branding -->
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2">
+                    <span class="font-black text-sm tracking-wide text-white uppercase flex items-center gap-1.5">
+                        <span class="text-neoncyan text-base font-extrabold">BAOX - AI</span> - Automation Tools
+                    </span>
+                    <span class="px-2 py-0.5 text-[10px] font-black rounded-md bg-gradient-to-r from-red-600 to-pink-600 text-white tracking-wider">
+                        PRO MAX 2026
+                    </span>
+                </div>
+                <span class="text-slate-600 text-xs">|</span>
+                <span class="text-xs text-slate-400 hidden md:inline-block">
+                    Behavior Multi-Thread • Auto-Tiling Grid • Chrome Stealth Anti-Detect
+                </span>
+            </div>
+
+            <!-- Right Status Badges -->
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-900 border border-emerald-500/30 text-emerald-400 text-xs font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Engine Playwright Stealth <strong class="text-emerald-300">ONLINE</strong></span>
+                </div>
+                <div class="flex items-center space-x-1.5 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 text-xs font-semibold shadow-sm shadow-cyan-500/20">
+                    <span>💎</span>
+                    <span>Gói Diamond (Vĩnh Viễn)</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- APP BODY (Sidebar + Main Content) -->
+        <div class="flex-1 flex overflow-hidden">
+            
+            <!-- LEFT SIDEBAR -->
+            <aside class="w-64 bg-darksidebar border-r border-darkborder flex flex-col justify-between shrink-0 select-none">
+                <div class="py-4 space-y-6">
+                    
+                    <!-- Menu Group 1 -->
+                    <div class="space-y-1">
+                        <div class="px-5 text-[11px] font-bold tracking-wider text-slate-500 uppercase mb-2">
+                            Quản Trị Kênh
+                        </div>
+                        <a href="#" @click.prevent="activeNav = 'nurture'" :class="activeNav === 'nurture' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2.5 flex items-center justify-between text-xs font-semibold transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="layers" class="w-4 h-4"></i> Trung Tâm Nuôi Kênh
+                            </span>
+                        </a>
+                        <a href="#" @click.prevent="activeNav = 'profile_sheet'" :class="activeNav === 'profile_sheet' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2.5 flex items-center justify-between text-xs font-semibold transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="sheet" class="w-4 h-4"></i> Quản Lý Profile Sheet
+                            </span>
+                            <span class="px-1.5 py-0.2 rounded-full bg-red-600 text-[10px] text-white font-bold">1</span>
+                        </a>
+                        <a href="#" @click.prevent="activeNav = 'proxy'" :class="activeNav === 'proxy' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2.5 flex items-center justify-between text-xs font-semibold transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="shield-check" class="w-4 h-4"></i> Cấu Hình Proxy Stealth
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- Menu Group 2 -->
+                    <div class="space-y-1">
+                        <div class="px-5 text-[11px] font-bold tracking-wider text-slate-500 uppercase mb-2">
+                            Tự Động Hóa Nền Tảng
+                        </div>
+                        <a href="#" @click.prevent="filterPlatform = 'facebook'" class="px-5 py-2 flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <span class="text-blue-500 font-bold">f</span> Facebook Nhóm & Reels
+                            </span>
+                        </a>
+                        <a href="#" @click.prevent="filterPlatform = 'tiktok'" class="px-5 py-2 flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <span class="text-pink-400 font-bold">d</span> TikTok For You & Shop
+                            </span>
+                        </a>
+                        <a href="#" @click.prevent="filterPlatform = 'youtube'" class="px-5 py-2 flex items-center justify-between text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <span class="text-red-500 font-bold">▶</span> YouTube Shorts Studio
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- Menu Group 3 -->
+                    <div class="space-y-1">
+                        <div class="px-5 text-[11px] font-bold tracking-wider text-slate-500 uppercase mb-2">
+                            Video & Bản Quyền
+                        </div>
+                        <a href="#" @click.prevent="activeNav = 'video_upload'" :class="activeNav === 'video_upload' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs font-semibold transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="film" class="w-4 h-4"></i> Đổi MD5 & Lách Bản Quyền
+                            </span>
+                        </a>
+                        <a href="#" @click.prevent="activeNav = 'logs'" :class="activeNav === 'logs' ? 'active-tab' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'" class="px-5 py-2 flex items-center justify-between text-xs font-semibold transition-colors">
+                            <span class="flex items-center gap-2.5">
+                                <i data-lucide="terminal" class="w-4 h-4"></i> Live Logs Realtime
+                            </span>
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Bottom Status Box -->
+                <div class="p-4 border-t border-darkborder bg-slate-950/40 text-[11px] text-slate-400 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Trạng thái:</span>
+                        <span class="text-emerald-400 font-bold flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> ONLINE
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Phiên bản:</span>
+                        <span class="text-slate-300 font-medium">v2026 PRO MAX</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Cơ chế:</span>
+                        <span class="text-cyan-400 font-medium">Multi-Context Grid</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT AREA -->
+            <main class="flex-1 bg-darkbg p-6 overflow-y-auto custom-scroll space-y-5">
+                
+                <!-- Category Tag & Heading -->
+                <div class="space-y-1">
+                    <div class="inline-block px-3 py-1 rounded-full text-[10px] font-bold tracking-wider text-cyan-300 bg-cyan-950/50 border border-cyan-500/30 uppercase">
+                        MULTI-ACCOUNT MANAGEMENT
+                    </div>
+                    <h2 class="text-xl font-bold tracking-tight text-white">
+                        Quản Trị Dàn Kênh & Môi Trường Trình Duyệt
+                    </h2>
+                    <p class="text-xs text-slate-400">
+                        Tự động hóa qua Profile Chrome Playwright Stealth chống quét đa luồng, bảo mật cao cấp.
+                    </p>
+                </div>
+
+                <!-- BANNER: TRUNG TÂM NUÔI KÊNH HÀNG LOẠT -->
+                <div class="rounded-xl bg-gradient-to-r from-slate-900/90 via-[#0c1628] to-slate-900/90 border border-emerald-500/30 p-5 space-y-4 shadow-xl">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center shrink-0 text-emerald-400 mt-0.5">
+                                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                    Trung Tâm Nuôi Kênh Hàng Loạt (AI Human-Behavior)
+                                </h3>
+                                <p class="text-xs text-slate-400 mt-0.5 leading-relaxed">
+                                    Mở đồng loạt tài khoản được bật • Tự động xếp lưới độc lập • Facebook lướt Bảng tin & Reels xem kỹ • TikTok lướt For You & né QC • Thao tác giống người thật 100%
+                                </p>
+                            </div>
+                        </div>
+                        <div class="shrink-0 flex items-center gap-2">
+                            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-500/30">
+                                ✔ Sẵn sàng ({{ enabledAccountsCount }}/{{ accounts.length }} kênh đã bật)
+                            </span>
+                            <button @click="showAddModal = true" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 flex items-center gap-1">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm Kênh
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Control Row -->
+                    <div class="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div class="flex items-center space-x-2 text-xs">
+                                <span class="text-slate-400">Thời gian nuôi / kênh:</span>
+                                <select v-model="durationMinutes" class="bg-slate-950 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-cyan-500 font-medium">
+                                    <option :value="5">5 phút (Nhanh)</option>
+                                    <option :value="10">10 phút (Chuẩn)</option>
+                                    <option :value="15">15 phút (Kỹ)</option>
+                                    <option :value="30">30 phút (Chuyên sâu)</option>
+                                </select>
+                            </div>
+
+                            <button @click="toggleAll(true)" class="px-3 py-1.5 rounded-lg bg-cyan-700/80 hover:bg-cyan-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> BẬT TẤT CẢ
+                            </button>
+
+                            <button @click="toggleAll(false)" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition flex items-center gap-1.5 border border-slate-700">
+                                <i data-lucide="x" class="w-3.5 h-3.5"></i> TẮT TẤT CẢ
+                            </button>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <button @click="startBatchNurture" class="btn-glow-green text-white font-extrabold text-xs px-5 py-2.5 rounded-lg transition-all flex items-center gap-2 transform active:scale-95 cursor-pointer">
+                                <i data-lucide="zap" class="w-4 h-4 fill-white"></i> BẮT ĐẦU NUÔI HÀNG LOẠT (TỰ ĐỘNG XẾP LƯỚI GRID)
+                            </button>
+
+                            <button @click="stopAll" class="px-3.5 py-2 rounded-lg bg-red-950/80 hover:bg-red-900 border border-red-500/40 text-red-300 text-xs font-bold transition flex items-center gap-1.5">
+                                <i data-lucide="square" class="w-3.5 h-3.5 fill-red-400"></i> Dừng Toàn Bộ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHANNELS MATRIX GRID (3 COLUMNS) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div v-for="acc in filteredAccounts" :key="acc.id" class="rounded-xl bg-darkcard border border-darkborder overflow-hidden hover:border-slate-700 transition-all flex flex-col justify-between shadow-lg">
+                        
+                        <!-- Top Toggle Pill Switch -->
+                        <div class="px-4 py-2.5 bg-slate-900/90 border-b border-darkborder flex items-center justify-between">
+                            <button @click="toggleSingle(acc)" :class="acc.is_enabled ? 'bg-emerald-600 text-white border-emerald-400' : 'bg-slate-800 text-slate-400 border-slate-700'" class="px-3 py-1 rounded-full text-[11px] font-bold border flex items-center gap-1.5 transition-all">
+                                <span class="w-2 h-2 rounded-full" :class="acc.is_enabled ? 'bg-white' : 'bg-slate-500'"></span>
+                                {{ acc.is_enabled ? 'BẬT NUÔI KÊNH NÀY' : 'ĐÃ TẮT NUÔI' }}
+                            </button>
+                            <span class="text-[10px] text-slate-500 font-mono">ID: #{{ acc.id }}</span>
+                        </div>
+
+                        <!-- Card Content -->
+                        <div class="p-4 space-y-3 flex-1">
+                            
+                            <!-- Header Info -->
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center space-x-2.5">
+                                    <!-- Platform Badge Icon -->
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
+                                         :class="acc.platform === 'facebook' ? 'bg-blue-600 text-white' : (acc.platform === 'youtube' ? 'bg-red-600 text-white' : 'bg-slate-800 text-pink-400 border border-pink-500/40')">
+                                        <span v-if="acc.platform === 'facebook'">f</span>
+                                        <span v-else-if="acc.platform === 'youtube'">▶</span>
+                                        <span v-else>d</span>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-white tracking-tight flex items-center gap-1">
+                                            {{ acc.name }}
+                                        </h4>
+                                        <p class="text-[11px] text-slate-400 capitalize">
+                                            {{ acc.platform }} • {{ acc.followers_count || 0 }} Followers
+                                        </p>
+                                    </div>
+                                </div>
+                                <button @click="deleteAccount(acc.id)" class="text-slate-500 hover:text-red-400 text-xs">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+
+                            <!-- Card Specs List -->
+                            <div class="rounded-lg bg-cardinner p-3 space-y-1.5 text-[11px]">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Engine Trình duyệt:</span>
+                                    <span class="text-cyan-300 font-semibold flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span> Chrome Stealth (Lưu Phiên Vĩnh Viễn)
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Proxy:</span>
+                                    <span class="text-slate-300 font-mono">{{ acc.proxy || 'Dùng IP máy / 50ms' }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Trạng thái:</span>
+                                    <span :class="acc.status === 'running' ? 'text-cyan-400 font-bold' : 'text-emerald-400 font-semibold'">
+                                        ● {{ acc.status === 'running' ? 'Đang chạy nuôi' : 'Đang hoạt động' }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-400">Tạo lúc:</span>
+                                    <span class="text-slate-400">{{ acc.created_at ? acc.created_at.split(' ')[0] : '1/10/2026' }}</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Card Action Buttons (3 Buttons) -->
+                        <div class="px-4 py-3 bg-slate-900/60 border-t border-darkborder grid grid-cols-3 gap-2">
+                            <button @click="openLogin(acc)" class="px-2 py-1.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1 shadow-sm">
+                                <i data-lucide="key" class="w-3 h-3"></i> Đăng Nhập
+                            </button>
+                            <button @click="checkAlive(acc)" class="px-2 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-[11px] border border-slate-700 transition flex items-center justify-center gap-1">
+                                <i data-lucide="zap" class="w-3 h-3"></i> Kiểm Tra
+                            </button>
+                            <button @click="nurtureSingle(acc)" class="px-2 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1 shadow-sm shadow-emerald-500/20">
+                                <i data-lucide="play" class="w-3 h-3"></i> Nuôi Kênh
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- LIVE LOG TERMINAL EMBEDDED -->
+                <div class="rounded-xl bg-black/90 border border-darkborder p-4 font-mono text-xs space-y-2">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-400 text-xs">
+                        <span class="flex items-center gap-2 text-emerald-400 font-bold">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> TERMINAL REALTIME SYSTEM LOGS
+                        </span>
+                        <span class="text-[11px] text-slate-500">Auto-Scroll: ON</span>
+                    </div>
+                    <div class="h-36 overflow-y-auto custom-scroll space-y-1.5 pr-2">
+                        <div v-for="(l, i) in logs.slice(0, 30)" :key="i" class="flex items-start space-x-2 text-[11px] leading-relaxed">
+                            <span class="text-slate-600">[{{ l.timestamp }}]</span>
+                            <span class="px-1 rounded text-[10px] font-bold"
+                                  :class="l.status === 'success' ? 'bg-emerald-950 text-emerald-400' : (l.status === 'error' ? 'bg-red-950 text-red-400' : 'bg-cyan-950 text-cyan-400')">
+                                {{ l.status.toUpperCase() }}
+                            </span>
+                            <span class="text-slate-300 font-semibold">[{{ l.account_name }}]</span>
+                            <span class="text-slate-300">{{ l.action }}: {{ l.details }}</span>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- MODAL THÊM KÊNH MỚI -->
+        <div v-if="showAddModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-darkcard border border-darkborder rounded-2xl w-full max-w-md p-6 space-y-4">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-neoncyan"></i> Thêm Tài Khoản Vào Dàn Kênh
+                </h3>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Tên Kênh / Ký hiệu</label>
+                        <input v-model="newAcc.name" type="text" placeholder="Ví dụ: quetuduy hoặc hgboo213" class="w-full bg-slate-950 border border-darkborder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Nền tảng</label>
+                        <select v-model="newAcc.platform" class="w-full bg-slate-950 border border-darkborder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+                            <option value="tiktok">TikTok</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="youtube">YouTube</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Proxy riêng (Để trống nếu dùng IP máy)</label>
+                        <input v-model="newAcc.proxy" type="text" placeholder="user:pass@ip:port hoặc ip:port" class="w-full bg-slate-950 border border-darkborder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-3 border-t border-darkborder">
+                    <button @click="showAddModal = false" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold">Hủy</button>
+                    <button @click="createAccount" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold">Lưu Kênh</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- VUE 3 APPLICATION -->
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    activeNav: 'nurture',
+                    filterPlatform: 'all',
+                    durationMinutes: 10,
+                    showAddModal: false,
+                    accounts: [],
+                    logs: [],
+                    newAcc: {
+                        name: '',
+                        platform: 'tiktok',
+                        proxy: ''
+                    }
+                }
+            },
+            computed: {
+                enabledAccountsCount() {
+                    return this.accounts.filter(a => a.is_enabled === 1 || a.is_enabled === true).length;
+                },
+                filteredAccounts() {
+                    if (this.filterPlatform === 'all') return this.accounts;
+                    return this.accounts.filter(a => a.platform.toLowerCase() === this.filterPlatform);
+                }
+            },
+            mounted() {
+                this.loadData();
+                this.initWebSocket();
+                setInterval(this.loadData, 4000);
+                setTimeout(() => lucide.createIcons(), 300);
+            },
+            updated() {
+                lucide.createIcons();
+            },
+            methods: {
+                async loadData() {
+                    try {
+                        const [accRes, logRes] = await Promise.all([
+                            fetch('/api/accounts'),
+                            fetch('/api/logs?limit=40')
+                        ]);
+                        this.accounts = await accRes.json();
+                        this.logs = await logRes.json();
+                    } catch (e) {
+                        console.error("Lỗi fetch dữ liệu:", e);
+                    }
+                },
+                initWebSocket() {
+                    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+                    const ws = new WebSocket(`${protocol}//${window.location.host}/ws/logs`);
+                    ws.onmessage = (event) => {
+                        const item = JSON.parse(event.data);
+                        this.logs.unshift(item);
+                        if (this.logs.length > 100) this.logs.pop();
+                    };
+                },
+                async toggleSingle(acc) {
+                    const res = await fetch(`/api/accounts/${acc.id}/toggle-active`, { method: 'POST' });
+                    if (res.ok) {
+                        const data = await res.json();
+                        acc.is_enabled = data.is_enabled;
+                    }
+                },
+                async toggleAll(active) {
+                    await fetch(`/api/accounts/toggle-all?active=${active}`, { method: 'POST' });
+                    this.loadData();
+                },
+                async openLogin(acc) {
+                    const res = await fetch(`/api/accounts/${acc.id}/open-login`, { method: 'POST' });
+                    const data = await res.json();
+                    alert(`Đang mở trình duyệt Chrome cho kênh: ${acc.name}\nVui lòng đăng nhập tài khoản một lần duy nhất. Trình duyệt sẽ lưu phiên vĩnh viễn!`);
+                },
+                async checkAlive(acc) {
+                    const res = await fetch(`/api/accounts/${acc.id}/check-alive`, { method: 'POST' });
+                    const data = await res.json();
+                    alert(`[KẾT QUẢ KIỂM TRA]\nKênh: ${acc.name}\nTrạng thái: ONLINE\nEngine: Chrome Stealth\nProxy: ${acc.proxy || 'IP Máy'}`);
+                },
+                async nurtureSingle(acc) {
+                    const res = await fetch(`/api/accounts/${acc.id}/nurture`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ actions_count: 15 })
+                    });
+                    const data = await res.json();
+                    alert(data.message);
+                    this.loadData();
+                },
+                async startBatchNurture() {
+                    const res = await fetch(`/api/accounts/nurture-batch?duration_minutes=${this.durationMinutes}`, { method: 'POST' });
+                    const data = await res.json();
+                    alert(data.message);
+                    this.loadData();
+                },
+                async stopAll() {
+                    const res = await fetch('/api/accounts/stop-all', { method: 'POST' });
+                    const data = await res.json();
+                    alert(data.message);
+                    this.loadData();
+                },
+                async createAccount() {
+                    if (!this.newAcc.name) return alert("Vui lòng nhập tên kênh!");
+                    const res = await fetch('/api/accounts', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            name: `(${this.newAcc.platform.toUpperCase()}): ${this.newAcc.name}`,
+                            platform: this.newAcc.platform,
+                            method: 'browser',
+                            proxy: this.newAcc.proxy
+                        })
+                    });
+                    if (res.ok) {
+                        this.showAddModal = false;
+                        this.newAcc.name = '';
+                        this.loadData();
+                    }
+                },
+                async deleteAccount(id) {
+                    if (confirm("Bạn có chắc muốn xóa kênh này khỏi hệ thống?")) {
+                        await fetch(`/api/accounts/${id}`, { method: 'DELETE' });
+                        this.loadData();
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

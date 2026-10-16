@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+venv/
+env/
+ENV/
+
+# Playwright & Storage
+storage/profiles/
+storage/videos/*
+!storage/videos/.gitkeep
+storage/processed_videos/*
+!storage/processed_videos/.gitkeep
+*.db
+*.sqlite3
+
+# IDE
+.vscode/
+.vs/
+.idea/
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
